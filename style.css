@@ -1,0 +1,76 @@
+/* 기본 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 지도 스타일 */
+#map {
+    width: 100%;
+    height: 70%; /* 화면의 70% 차지 */
+    z-index: 1;
+}
+
+/* 하단 정보 패널 스타일 */
+#info-panel {
+    height: 30%;
+    background-color: white;
+    padding: 20px;
+    border-top: 2px solid #ddd;
+    overflow-y: auto;
+    text-align: center;
+}
+
+#store-name {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#store-desc {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* 반응형: PC 화면에서는 옆으로 배치 */
+@media (min-width: 768px) {
+    main {
+        flex-direction: row;
+    }
+    
+    #map {
+        width: 70%;
+        height: 100%;
+    }
+    
+    #info-panel {
+        width: 30%;
+        height: 100%;
+        border-top: none;
+        border-left: 2px solid #ddd;
+        text-align: left;
+    }
+}
