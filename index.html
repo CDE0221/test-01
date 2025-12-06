@@ -2,108 +2,163 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>안산 맛집 지도 (통합본)</title>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <title>안산 맛집 지도</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <style>
-        /* CSS 스타일 영역 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh; /* 화면 전체 높이 사용 */
             margin: 0;
-        }
-        header {
-            background-color: #ff6b6b;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        /* 지도 높이 설정 (이 부분이 없으면 지도가 안 보입니다!) */
-        #map-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        
-        #map {
-            width: 100%;
-            height: 100%; /* 부모 컨테이너를 가득 채움 */
-            min-height: 400px; /* 최소 높이 보장 */
-            z-index: 1;
-        }
-        
-        #info-panel {
-            height: 30%;
-            background-color: white;
-            padding: 20px;
-            border-top: 2px solid #ddd;
-            overflow-y: auto;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 2;
+            font-family: Arial, sans-serif;
+            height: 100vh;
         }
 
-        /* PC 화면 대응 */
-        @media (min-width: 768px) {
-            #map-container {
-                flex-direction: row;
-            }
-            #map {
-                width: 70%;
-                height: 100%;
-            }
-            #info-panel {
-                width: 30%;
-                height: 100%;
-                border-top: none;
-                border-left: 2px solid #ddd;
-            }
+        /* ✅ 첫 화면 (카테고리 선택 창) */
+        #category-screen {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
+        #category-screen h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        #category-screen p {
+            margin: 0 0 10px 0;
+            color: #555;
+        }
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .category-buttons button {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            background: #1e90ff;
+            color: white;
+        }
+        .category-buttons button:hover {
+            opacity: 0.85;
+        }
+
+        /* ✅ 지도 화면 (지도 + 정보 패널) */
+        #map-screen {
+            display: none;          /* 처음에는 숨겨둠 */
+            height: 100vh;
+            display: none;
+        }
+        #map-container {
+            display: flex;
+            height: 100%;
+        }
+        #map {
+            flex: 3;
+        }
+        #info-panel {
+            flex: 1;
+            padding: 20px;
+            border-left: 2px solid #ddd;
+        }
+        #selected-category-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #1e90ff;
+        }
+        #store-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        #store-desc {
+            font-size: 15px;
+            line-height: 1.5;
         }
     </style>
 </head>
+
 <body>
 
-    <header>🍽️ 안산 맛집 지도</header>
+    <!-- ✅ 1. 처음 들어왔을 때 보이는 화면 -->
+    <div id="category-screen">
+        <h1>안산 맛집 지도</h1>
+        <p>원하는 음식 종류를 선택하세요</p>
 
-    <div id="map-container">
-        <div id="map"></div>
-        
-        <div id="info-panel">
-            <h2 id="store-name" style="margin-bottom: 10px;">맛집을 선택하세요</h2>
-            <p id="store-desc" style="color:#666;">지도 위의 핀을 클릭하면 상세 정보가 나옵니다.</p>
+        <div class="category-buttons">
+            <button class="category-btn" data-category="한식">한식</button>
+            <button class="category-btn" data-category="중식">중식</button>
+            <button class="category-btn" data-category="일식">일식</button>
+            <button class="category-btn" data-category="양식">양식</button>
+            <button class="category-btn" data-category="기타">기타</button>
         </div>
     </div>
 
+    <!-- ✅ 2. 선택 후에 보이는 지도 화면 -->
+    <div id="map-screen">
+        <div id="map-container">
+            <div id="map"></div>
+
+            <div id="info-panel">
+                <div id="selected-category-title">선택한 카테고리: 전체</div>
+                <div id="store-name">맛집을 클릭하세요</div>
+                <div id="store-desc">선택한 위치의 정보가 표시됩니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+
     <script>
-        // 자바스크립트 영역
-        
-        // 1. 지도 생성 (중심 좌표: 안산시청)
-        var map = L.map('map').setView([37.3219, 126.8309], 14);
+        let map;                 // 전역 변수
+        let mapInitialized = false; // 지도 생성 여부 체크
 
-        // 2. 타일 레이어(지도 그림) 추가
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        // 3. 데이터
+        // ✅ 네가 준 맛집 데이터 그대로 사용
         const restaurants = [
-            { name: "중앙동 파스타", lat: 37.3165, lng: 126.8385, category: "양식", desc: "데이트하기 좋은 파스타집" },
-            { name: "고잔동 삼겹살", lat: 37.3105, lng: 126.8315, category: "한식", desc: "회식 장소 추천 삼겹살" },
-            { name: "에리카 카페", lat: 37.2980, lng: 126.8360, category: "카페", desc: "공부하기 좋은 조용한 카페" },
-            { name: "안산역 쌀국수", lat: 37.3265, lng: 126.7890, category: "아시안", desc: "현지인이 운영하는 쌀국수 맛집" }
+            {
+                name: "중앙동 파스타 맛집",
+                lat: 37.3165,
+                lng: 126.8385,
+                category: "양식",
+                desc: "분위기 좋은 데이트 코스로 추천하는 파스타 전문점입니다. <br>추천 메뉴: 크림 파스타"
+            },
+            {
+                name: "고잔동 삼겹살",
+                lat: 37.3105,
+                lng: 126.8315,
+                category: "한식",
+                desc: "육즙이 살아있는 숙성 삼겹살 맛집입니다. <br>단체 회식 장소로 좋습니다."
+            },
+            {
+                name: "에리카 카페거리",
+                lat: 37.2980,
+                lng: 126.8360,
+                category: "카페",
+                desc: "한양대 에리카 근처의 조용한 감성 카페입니다. <br>카공하기 좋은 곳."
+            },
+            {
+                name: "안산역 다문화 음식점",
+                lat: 37.3265,
+                lng: 126.7890,
+                category: "아시안",
+                desc: "현지의 맛을 그대로 느낄 수 있는 쌀국수 전문점입니다."
+            }
         ];
 
-        // 4. 아이콘 설정 (이미지 경로 문제 방지용)
-        var defaultIcon = L.icon({
+        // ✅ 마커 아이콘 설정
+        const defaultIcon = L.icon({
             iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
             shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
             iconSize: [25, 41],
@@ -112,21 +167,56 @@
             shadowSize: [41, 41]
         });
 
-        // 5. 마커 추가
-        restaurants.forEach(function(store) {
-            var marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
-            
-            // 클릭 이벤트
-            marker.on('click', function() {
-                map.setView([store.lat, store.lng], 16); // 클릭 시 해당 위치로 줌인
-                document.getElementById('store-name').innerText = store.name;
-                document.getElementById('store-desc').innerHTML = 
-                    `<b>분류:</b> ${store.category}<br><br>${store.desc}`;
+        // ✅ 지도 + 마커 세팅을 담당하는 함수 (딱 한 번만 실행)
+        function initMap() {
+            // 1. 지도 생성 (중심 좌표: 안산시청 근처)
+            map = L.map('map').setView([37.3219, 126.8309], 14);
+
+            // 2. 오픈스트리트맵 타일 레이어 추가
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // 3. 데이터 기반으로 마커 추가
+            restaurants.forEach(function(store) {
+                var marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
+
+                marker.bindPopup(`<b>${store.name}</b><br>${store.category}`);
+
+                marker.on('click', function() {
+                    document.getElementById('store-name').innerText =
+                        store.name + " (" + store.category + ")";
+                    document.getElementById('store-desc').innerHTML = store.desc;
+                });
+            });
+        }
+
+        // ✅ 카테고리 버튼 클릭하면
+        const buttons = document.querySelectorAll('.category-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+
+                // 1) 첫 화면 숨기고, 지도 화면 보이게
+                document.getElementById('category-screen').style.display = 'none';
+                document.getElementById('map-screen').style.display = 'block';
+
+                // 2) 선택한 카테고리 문구 표시
+                document.getElementById('selected-category-title').innerText =
+                    "선택한 카테고리: " + category;
+
+                // 3) 지도 아직 안 만들었으면 생성
+                if (!mapInitialized) {
+                    initMap();
+                    mapInitialized = true;
+
+                    // 화면 전환 후 크기 보정
+                    setTimeout(() => {
+                        map.invalidateSize();
+                    }, 100);
+                }
             });
         });
-        
-        // 지도 크기가 변경되었을 때 다시 그리기 (레이아웃 깨짐 방지)
-        setTimeout(function(){ map.invalidateSize(); }, 100);
     </script>
 </body>
 </html>
