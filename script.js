@@ -1,12 +1,6 @@
-// 1. 지도 생성 (중심 좌표: 안산시청 근처)
-var map = L.map('map').setView([37.3219, 126.8309], 14);
+let map;
+let mapInitialized = false;
 
-// 2. 오픈스트리트맵 타일 레이어 추가 (지도 이미지 불러오기)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
-
-// 3. 맛집 데이터 (예시 데이터)
 const restaurants = [
     {
         name: "중앙동 파스타 맛집",
@@ -38,9 +32,7 @@ const restaurants = [
     }
 ];
 
-// 4. 마커 아이콘 설정 (기본 파란 핀)
-// (Leaflet 기본 마커 이미지 경로 이슈 해결을 위한 코드)
-var defaultIcon = L.icon({
+const defaultIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
@@ -49,17 +41,48 @@ var defaultIcon = L.icon({
     shadowSize: [41, 41]
 });
 
-// 5. 데이터를 기반으로 지도에 마커 추가하기
-restaurants.forEach(function(store) {
-    // 마커 생성
-    var marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
-    
-    // 마커 클릭 시 팝업 표시
-    marker.bindPopup(`<b>${store.name}</b><br>${store.category}`);
+function initMap() {
+    map = L.map('map').setView([37.3219, 126.8309], 14);
 
-    // 마커 클릭 시 하단(또는 우측) 패널 정보 업데이트
-    marker.on('click', function() {
-        document.getElementById('store-name').innerText = store.name + " (" + store.category + ")";
-        document.getElementById('store-desc').innerHTML = store.desc;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    restaurants.forEach(store => {
+        const marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
+
+        marker.bindPopup(`<b>${store.name}</b><br>${store.category}`);
+
+        marker.on('click', () => {
+            document.getElementById("store-name").innerText =
+                `${store.name} (${store.category})`;
+            document.getElementById("store-desc").innerHTML = store.desc;
+        });
     });
+}
+
+// 카테고리 클릭 이벤트
+document.querySelectorAll(".category-card").forEach(card => {
+    card.addEventListener("click", () => {
+        const category = card.dataset.category;
+
+        document.getElementById("category-screen").style.display = "none";
+        document.getElementById("map-screen").style.display = "block";
+
+        document.getElementById("selected-category-title").innerText =
+            `선택한 카테고리: ${category}`;
+
+        if (!mapInitialized) {
+            initMap();
+            mapInitialized = true;
+        }
+        // 지도가 보일 때 크기 재조정 (깨짐 방지)
+        setTimeout(() => map.invalidateSize(), 100);
+    });
+});
+
+// ▼ [추가된 부분] 뒤로가기 버튼 기능
+document.getElementById("back-btn").addEventListener("click", () => {
+    document.getElementById("map-screen").style.display = "none";
+    document.getElementById("category-screen").style.display = "flex";
 });

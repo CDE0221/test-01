@@ -8,69 +8,96 @@
 body {
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #f4f4f4;
-    display: flex;
+    display: flex; /* 주의: HTML 구조상 body flex가 필요 없는 경우도 있으나 보내주신 원본 유지 */
     flex-direction: column;
     height: 100vh;
 }
 
-header {
-    background-color: #ff6b6b;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-main {
-    flex: 1;
+/* ✅ 처음 화면 (보내주신 index.html 내부 스타일 복사) */
+#category-screen {
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    position: relative;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 20px;
 }
-
-/* 지도 스타일 */
-#map {
-    width: 100%;
-    height: 70%; /* 화면의 70% 차지 */
-    z-index: 1;
+#category-screen h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
 }
-
-/* 하단 정보 패널 스타일 */
-#info-panel {
-    height: 30%;
-    background-color: white;
-    padding: 20px;
-    border-top: 2px solid #ddd;
-    overflow-y: auto;
-    text-align: center;
-}
-
-#store-name {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-#store-desc {
+#category-screen p {
+    margin-bottom: 24px;
     color: #666;
-    line-height: 1.6;
+    font-size: 14px;
 }
 
-/* 반응형: PC 화면에서는 옆으로 배치 */
-@media (min-width: 768px) {
-    main {
-        flex-direction: row;
-    }
-    
-    #map {
-        width: 70%;
-        height: 100%;
-    }
-    
+.card-grid {
+    width: 100%;
+    max-width: 760px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+}
+
+.category-card {
+    border: none;
+    border-radius: 18px;
+    padding: 18px 14px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-align: left;
+}
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+    background: #f7fbff;
+}
+.emoji { font-size: 28px; }
+.title { font-size: 17px; font-weight: 600; }
+.desc { font-size: 12px; color: #777; }
+
+/* 지도 화면 */
+#map-screen { display: none; height: 100vh; width: 100%; }
+#map-container { display: flex; height: 100%; width: 100%; }
+#map { flex: 3; }
+
+#info-panel {
+    flex: 1;
+    padding: 20px;
+    border-left: 2px solid #e1e4ea;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+#selected-category-title {
+    font-size: 14px;
+    color: #1e90ff;
+    font-weight: 600;
+}
+#store-name {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+}
+#store-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    #map-container { flex-direction: column; }
     #info-panel {
-        width: 30%;
-        height: 100%;
-        border-top: none;
-        border-left: 2px solid #ddd;
-        text-align: left;
+        border-left: none;
+        border-top: 2px solid #e1e4ea;
+        height: 40vh;
     }
+    #map { height: 60vh; }
 }
