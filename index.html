@@ -16,7 +16,7 @@
             background: #f5f7fb;
         }
 
-        /* ✅ 처음 화면 */
+        /* 처음 화면 */
         #category-screen {
             height: 100vh;
             display: flex;
@@ -185,6 +185,7 @@
     let map;
     let mapInitialized = false;
 
+    /* 가게 데이터 */
     const restaurants = [
         {
             name: "중앙동 파스타 맛집",
@@ -216,6 +217,7 @@
         }
     ];
 
+    /* Leaflet 기본 마커 */
     const defaultIcon = L.icon({
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -225,44 +227,41 @@
         shadowSize: [41, 41]
     });
 
+    /* 🔥 지도 초기화 + 안산 영역 제한 */
     function initMap() {
-    // ✅ 안산(대략) 범위 설정 – 필요하면 숫자 조금씩 조정 가능
-    const ansanBounds = L.latLngBounds(
-        [37.26, 126.75], // 남서쪽 (SW)
-        [37.37, 126.90]  // 북동쪽 (NE)
-    );
 
-    // ✅ 지도 생성할 때부터 안산 중심 + 줌/범위 제한
-    map = L.map('map', {
-        center: [37.3219, 126.8309], // 안산시청 근처
-        zoom: 13,                     // 시작 줌
-        minZoom: 12,                  // 너무 멀리 못 나가게
-        maxZoom: 18,                  // 적당히 확대만
-        maxBounds: ansanBounds,       // 안산 영역 밖으로 못 나가게
-        maxBoundsViscosity: 1.0       // 경계에 딱 붙게 튕김 효과
-    });
+        const ansanBounds = L.latLngBounds(
+            [37.26, 126.75],  // 남서쪽
+            [37.37, 126.90]   // 북동쪽
+        );
 
-    // ✅ 타일 레이어 추가 (원래 쓰던 거 그대로)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        minZoom: 12,
-        maxZoom: 18
-    }).addTo(map);
-
-    // 🔻 여기에 기존 마커 추가 코드 그대로 두면 됨
-    restaurants.forEach(store => {
-        const marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
-
-        marker.bindPopup(`<b>${store.name}</b><br>${store.category}`);
-
-        marker.on('click', () => {
-            document.getElementById("store-name").innerText =
-                `${store.name} (${store.category})`;
-            document.getElementById("store-desc").innerHTML = store.desc;
+        map = L.map('map', {
+            center: [37.3219, 126.8309],
+            zoom: 13,
+            minZoom: 12,
+            maxZoom: 18,
+            maxBounds: ansanBounds,
+            maxBoundsViscosity: 1.0
         });
-    });
-}
 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        restaurants.forEach(store => {
+            const marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
+
+            marker.bindPopup(`<b>${store.name}</b><br>${store.category}`);
+
+            marker.on('click', () => {
+                document.getElementById("store-name").innerText =
+                    `${store.name} (${store.category})`;
+                document.getElementById("store-desc").innerHTML = store.desc;
+            });
+        });
+    }
+
+    /* 🔥 카테고리 클릭 이벤트 */
     document.querySelectorAll(".category-card").forEach(card => {
         card.addEventListener("click", () => {
             const category = card.dataset.category;
