@@ -18,9 +18,7 @@
     />
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             margin: 0;
             background: #f3f4f6;
@@ -77,92 +75,91 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.12);
         }
 
-        .emoji {
-            font-size: 30px;
-            margin-bottom: 10px;
-        }
+        .emoji { font-size: 30px; margin-bottom: 10px; }
+        .title { font-size: 18px; font-weight: 700; }
+        .desc { font-size: 13px; color: #6b7280; }
 
-        .title {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .desc {
-            font-size: 13px;
-            color: #6b7280;
-        }
 
         /* ───────── 지도 화면 ───────── */
 
         #map-screen {
             display: none;
-            max-width: 1100px;
+            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 20px 30px;
         }
 
         #back-btn {
             background: #e5e7eb;
             border: none;
-            padding: 7px 16px;
+            padding: 8px 16px;
             border-radius: 999px;
             cursor: pointer;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         #map-container {
             display: flex;
-            gap: 16px;
+            gap: 24px;
         }
 
         #map {
-            flex: 3;
-            height: 430px;
+            flex: 4;
+            height: 520px;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 18px 40px rgba(0,0,0,0.12);
         }
 
         #info-panel {
-            flex: 2;
+            flex: 3;
+            min-height: 520px;
             background: white;
             border-radius: 18px;
-            padding: 16px 20px;
+            padding: 22px 26px;
             box-shadow: 0 18px 40px rgba(0,0,0,0.07);
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 10px;
         }
 
         #selected-category-title {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             color: #fb923c;
         }
 
         #store-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
         }
 
         #store-desc,
         #store-phone,
         #store-hours {
-            font-size: 14px;
+            font-size: 15px;
             color: #4b5563;
+            line-height: 1.5;
         }
 
         #reserve-btn {
-            margin-top: 8px;
-            padding: 8px 15px;
+            margin-top: 12px;
+            padding: 10px 15px;
             border: none;
             border-radius: 999px;
             background: #fb923c;
             color: white;
             cursor: pointer;
+            font-size: 14px;
+            width: fit-content;
         }
     </style>
 </head>
+
+
+
+
 <body>
 
     <!-- ⭐ 첫 화면 -->
@@ -243,8 +240,10 @@
     </div>
 
 
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 
     <script>
         const categoryScreen = document.getElementById("category-screen");
@@ -258,16 +257,16 @@
         const hoursEl = document.getElementById("store-hours");
         const reserveBtn = document.getElementById("reserve-btn");
 
-        /* ⭐ 안산 중심 & 범위 설정 */
+        /* ⭐ 안산 중심 & 범위 제한 */
         const ANSAN_CENTER = [37.3189, 126.8375];
         const ANSAN_ZOOM = 14;
 
         const map = L.map("map", {
-            maxBounds: [               // 안산 근처 박스
+            maxBounds: [
                 [37.26, 126.78],
                 [37.37, 126.89]
             ],
-            maxBoundsViscosity: 1.0    // 밖으로 못 나가게
+            maxBoundsViscosity: 1.0
         }).setView(ANSAN_CENTER, ANSAN_ZOOM);
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -275,7 +274,8 @@
             minZoom: 12
         }).addTo(map);
 
-        /* ⭐ 식당 데이터 */
+
+        /* ⭐ 맛집 데이터 */
         const stores = [
             { name:"진원소우 고잔신도시점", category:"한식", lat:37.3175, lng:126.8310, desc:"소고기 · 한식 고기 전문점", phone:"0507-1388-2292", hours:"11:00~22:30", reserve:"" },
             { name:"카페 나드오프 - 잎새달", category:"카페", lat:37.3310, lng:126.8120, desc:"감성 카페", phone:"정보 없음", hours:"10:00~22:00", reserve:"" },
@@ -308,7 +308,7 @@
             }
         }
 
-        /* ⭐ 카테고리 필터 – 절대 세계 전체로 안 나가게 */
+        /* ⭐ 카테고리 필터 */
         function filterMarkers(category) {
             const visible = markers.filter(m =>
                 category === "전체" || m.store.category === category
@@ -324,11 +324,9 @@
 
             if (visible.length > 0) {
                 const first = visible[0];
-                // 해당 카테고리 첫 가게 위치로 살짝 줌인
                 map.setView(first.getLatLng(), 16);
                 showStore(first.store);
             } else {
-                // 해당 카테고리에 가게 없으면 그냥 안산 중심
                 map.setView(ANSAN_CENTER, ANSAN_ZOOM);
                 storeNameEl.textContent = "등록된 식당이 없습니다";
                 storeDescEl.textContent = "이 카테고리에 등록된 맛집이 아직 없어요.";
@@ -338,7 +336,7 @@
             }
         }
 
-        /* ⭐ 카테고리 클릭 시 화면 전환 */
+        /* ⭐ 카테고리 클릭 → 지도화면 전환 */
         document.querySelectorAll(".category-card").forEach(card => {
             card.addEventListener("click", () => {
                 const cat = card.dataset.category;
@@ -358,7 +356,6 @@
         backBtn.addEventListener("click", () => {
             mapScreen.style.display = "none";
             categoryScreen.style.display = "block";
-            // 뒤로 갔다 다시 올 때도 안산으로
             map.setView(ANSAN_CENTER, ANSAN_ZOOM);
         });
     </script>
