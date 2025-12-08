@@ -2,284 +2,77 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>안산 맛집 지도</title>
-
-    <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: "Noto Sans KR", sans-serif;
-            height: 100vh;
-            background: #f5f7fb;
-        }
-
-        /* 처음 화면 */
-        #category-screen {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 32px 20px;
-        }
-        #category-screen h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        #category-screen p {
-            margin-bottom: 24px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .card-grid {
-            width: 100%;
-            max-width: 760px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-        }
-
-        .category-card {
-            border: none;
-            border-radius: 18px;
-            padding: 18px 14px;
-            background: white;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            text-align: left;
-        }
-        .category-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 24px rgba(0,0,0,0.1);
-            background: #f7fbff;
-        }
-        .emoji { font-size: 28px; }
-        .title { font-size: 17px; font-weight: 600; }
-        .desc { font-size: 12px; color: #777; }
-
-        /* 지도 화면 */
-        #map-screen { display: none; height: 100vh; }
-        #map-container { display: flex; height: 100%; }
-        #map { flex: 3; }
-
-        #info-panel {
-            flex: 1;
-            padding: 20px;
-            border-left: 2px solid #e1e4ea;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        #selected-category-title {
-            font-size: 14px;
-            color: #1e90ff;
-            font-weight: 600;
-        }
-        #store-name {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        #store-desc {
-            font-size: 14px;
-            line-height: 1.5;
-            color: #555;
-        }
-
-        @media (max-width: 768px) {
-            #map-container { flex-direction: column; }
-            #info-panel {
-                border-left: none;
-                border-top: 2px solid #e1e4ea;
-                height: 40vh;
-            }
-            #map { height: 60vh; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<!-- 🎨 카드형 카테고리 선택 화면 -->
-<div id="category-screen">
-    <h1>맛집 카테고리 선택</h1>
-    <p>보고 싶은 음식 종류를 선택하세요.</p>
+    <div id="category-screen">
+        <h1>안산 맛집 지도 😋</h1>
+        <p>오늘 뭐 먹지? 메뉴를 골라보세요.</p>
 
-    <div class="card-grid">
-
-        <button class="category-card" data-category="한식">
-            <span class="emoji">🍚</span>
-            <span class="title">한식</span>
-            <span class="desc">국밥 · 삼겹살 · 찌개</span>
-        </button>
-
-        <button class="category-card" data-category="중식">
-            <span class="emoji">🥢</span>
-            <span class="title">중식</span>
-            <span class="desc">짜장면 · 짬뽕 · 탕수육</span>
-        </button>
-
-        <button class="category-card" data-category="일식">
-            <span class="emoji">🍣</span>
-            <span class="title">일식</span>
-            <span class="desc">초밥 · 돈카츠 · 라멘</span>
-        </button>
-
-        <button class="category-card" data-category="양식">
-            <span class="emoji">🍝</span>
-            <span class="title">양식</span>
-            <span class="desc">파스타 · 스테이크</span>
-        </button>
-
-        <button class="category-card" data-category="분식">
-            <span class="emoji">🍙</span>
-            <span class="title">분식</span>
-            <span class="desc">떡볶이 · 김밥 · 튀김</span>
-        </button>
-
-        <button class="category-card" data-category="아시안">
-            <span class="emoji">🍜</span>
-            <span class="title">아시안</span>
-            <span class="desc">쌀국수 · 태국 음식</span>
-        </button>
-
-        <button class="category-card" data-category="패스트푸드">
-            <span class="emoji">🍔</span>
-            <span class="title">패스트푸드</span>
-            <span class="desc">버거 · 치킨</span>
-        </button>
-
-        <button class="category-card" data-category="카페">
-            <span class="emoji">☕</span>
-            <span class="title">카페</span>
-            <span class="desc">커피 · 디저트</span>
-        </button>
-
-    </div>
-</div>
-
-<!-- 🗺 지도 화면 -->
-<div id="map-screen">
-    <div id="map-container">
-        <div id="map"></div>
-
-        <div id="info-panel">
-            <div id="selected-category-title">선택한 카테고리: 전체</div>
-            <div id="store-name">맛집을 선택하세요</div>
-            <div id="store-desc">지도의 마커를 클릭하면 상세 정보가 나옵니다.</div>
+        <div class="card-grid">
+            <div class="category-card" data-category="한식">
+                <span class="emoji">🍚</span>
+                <span class="title">한식</span>
+                <span class="desc">집밥 · 찌개 · 삼겹살</span>
+            </div>
+            <div class="category-card" data-category="양식">
+                <span class="emoji">🍝</span>
+                <span class="title">양식</span>
+                <span class="desc">파스타 · 스테이크</span>
+            </div>
+            <div class="category-card" data-category="중식">
+                <span class="emoji">🥟</span>
+                <span class="title">중식</span>
+                <span class="desc">짜장면 · 딤섬</span>
+            </div>
+            <div class="category-card" data-category="일식">
+                <span class="emoji">🍣</span>
+                <span class="title">일식</span>
+                <span class="desc">초밥 · 라멘 · 돈카츠</span>
+            </div>
+            <div class="category-card" data-category="분식">
+                <span class="emoji">🍢</span>
+                <span class="title">분식</span>
+                <span class="desc">떡볶이 · 김밥</span>
+            </div>
+            <div class="category-card" data-category="카페">
+                <span class="emoji">☕</span>
+                <span class="title">카페</span>
+                <span class="desc">감성 카페 · 디저트</span>
+            </div>
+            <div class="category-card" data-category="아시안">
+                <span class="emoji">🍜</span>
+                <span class="title">아시안</span>
+                <span class="desc">쌀국수 · 마라탕</span>
+            </div>
+             <div class="category-card" data-category="전체">
+                <span class="emoji">👀</span>
+                <span class="title">전체보기</span>
+                <span class="desc">모든 맛집 보기</span>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <div id="map-screen">
+        <button id="back-btn">⬅ 다른 메뉴 고르기</button>
 
-<script>
-    let map;
-    let mapInitialized = false;
+        <div id="map-container">
+            <div id="map"></div>
+            
+            <div id="info-panel">
+                <div id="selected-category-title">CATEGORY</div>
+                <div id="store-name">식당 이름</div>
+                <div id="store-desc">마커를 클릭하면 상세 정보가 여기에 표시됩니다.</div>
+            </div>
+        </div>
+    </div>
 
-    /* 가게 데이터 */
-    const restaurants = [
-        {
-            name: "중앙동 파스타 맛집",
-            lat: 37.3165,
-            lng: 126.8385,
-            category: "양식",
-            desc: "분위기 좋은 데이트 코스로 추천하는 파스타 전문점입니다. <br>추천 메뉴: 크림 파스타"
-        },
-        {
-            name: "고잔동 삼겹살",
-            lat: 37.3105,
-            lng: 126.8315,
-            category: "한식",
-            desc: "육즙이 살아있는 숙성 삼겹살 맛집입니다. <br>단체 회식 장소로 좋습니다."
-        },
-        {
-            name: "에리카 카페거리",
-            lat: 37.2980,
-            lng: 126.8360,
-            category: "카페",
-            desc: "한양대 에리카 근처의 조용한 감성 카페입니다. <br>카공하기 좋은 곳."
-        },
-        {
-            name: "안산역 다문화 음식점",
-            lat: 37.3265,
-            lng: 126.7890,
-            category: "아시안",
-            desc: "현지의 맛을 그대로 느낄 수 있는 쌀국수 전문점입니다."
-        }
-    ];
-
-    /* Leaflet 기본 마커 */
-    const defaultIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-
-    /* 🔥 지도 초기화 + 안산 영역 제한 */
-    function initMap() {
-
-        const ansanBounds = L.latLngBounds(
-            [37.26, 126.75],  // 남서쪽
-            [37.37, 126.90]   // 북동쪽
-        );
-
-        map = L.map('map', {
-            center: [37.3219, 126.8309],
-            zoom: 13,
-            minZoom: 12,
-            maxZoom: 18,
-            maxBounds: ansanBounds,
-            maxBoundsViscosity: 1.0
-        });
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        restaurants.forEach(store => {
-            const marker = L.marker([store.lat, store.lng], {icon: defaultIcon}).addTo(map);
-
-            marker.bindPopup(`<b>${store.name}</b><br>${store.category}`);
-
-            marker.on('click', () => {
-                document.getElementById("store-name").innerText =
-                    `${store.name} (${store.category})`;
-                document.getElementById("store-desc").innerHTML = store.desc;
-            });
-        });
-    }
-
-    /* 🔥 카테고리 클릭 이벤트 */
-    document.querySelectorAll(".category-card").forEach(card => {
-        card.addEventListener("click", () => {
-            const category = card.dataset.category;
-
-            document.getElementById("category-screen").style.display = "none";
-            document.getElementById("map-screen").style.display = "block";
-
-            document.getElementById("selected-category-title").innerText =
-                `선택한 카테고리: ${category}`;
-
-            if (!mapInitialized) {
-                initMap();
-                mapInitialized = true;
-                setTimeout(() => map.invalidateSize(), 100);
-            }
-        });
-    });
-</script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
