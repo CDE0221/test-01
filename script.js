@@ -1,201 +1,190 @@
-// 화면 요소
 const categoryScreen = document.getElementById("category-screen");
 const mapScreen = document.getElementById("map-screen");
 const backBtn = document.getElementById("back-btn");
 
-const selectedCategoryTitle = document.getElementById("selected-category-title");
+const selectedTitle = document.getElementById("selected-category-title");
 const storeNameEl = document.getElementById("store-name");
 const storeDescEl = document.getElementById("store-desc");
-const storePhoneEl = document.getElementById("store-phone");
-const storeHoursEl = document.getElementById("store-hours");
+const phoneEl = document.getElementById("store-phone");
+const hoursEl = document.getElementById("store-hours");
 const reserveBtn = document.getElementById("reserve-btn");
 
-// 처음에는 카테고리 화면만 보이게
-categoryScreen.style.display = "block";
-mapScreen.style.display = "none";
+/* ⭐ 검색 관련 요소 */
+const searchInput = document.getElementById("search-input");
+const searchSuggestions = document.getElementById("search-suggestions");
 
-// Leaflet 지도 설정
-const map = L.map("map").setView([37.32, 126.83], 13);
+/* ⭐ 안산 중심 & 범위 제한 */
+const ANSAN_CENTER = [37.3189, 126.8375];
+const ANSAN_ZOOM = 14;
+
+const map = L.map("map", {
+    maxBounds: [
+        [37.26, 126.78],
+        [37.37, 126.89]
+    ],
+    maxBoundsViscosity: 1.0
+}).setView(ANSAN_CENTER, ANSAN_ZOOM);
+
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap"
+    maxZoom: 18,
+    minZoom: 12
 }).addTo(map);
 
-// ★ 요구사항 2: 식당 6개 데이터
+
+/* ⭐ 맛집 데이터 */
 const stores = [
-    {
-        name: "진원소우 고잔신도시점",
-        category: "한식",
-        lat: 37.3175,
-        lng: 126.8310,
-        desc: "소고기 · 샤브샤브 등 한식 계열 고기 맛집",
-        phone: "0507-1388-2292",
-        hours: "11:00 ~ 22:30",
-        reserveUrl: "" // 온라인 예약 링크 있으면 여기 넣기
-    },
-    {
-        name: "카페 나드오프 - 잎새달",
-        category: "카페",
-        lat: 37.3310,
-        lng: 126.8120,
-        desc: "감성 카페, 디저트와 함께 쉬기 좋은 곳",
-        phone: "정보 없음",
-        hours: "10:00 ~ 22:00 (변동 가능)",
-        reserveUrl: ""
-    },
-    {
-        name: "열이틀",
-        category: "카페",
-        lat: 37.3340,
-        lng: 126.8150,
-        desc: "조용한 분위기의 카페 열이틀",
-        phone: "정보 없음",
-        hours: "10:00 ~ 22:00 (변동 가능)",
-        reserveUrl: ""
-    },
-    {
-        name: "당당초밥",
-        category: "일식",
-        lat: 37.3150,
-        lng: 126.8380,
-        desc: "초밥 · 사시미 · 덮밥이 인기인 일식당",
-        phone: "0507-1312-5817",
-        hours: "11:30 ~ 21:00 (브레이크타임 있음, 가정)",
-        reserveUrl: ""
-    },
-    {
-        name: "파앤피하우스",
-        category: "양식",
-        lat: 37.3230,
-        lng: 126.8270,
-        desc: "파스타와 피자를 파는 양식 맛집",
-        phone: "정보 없음",
-        hours: "11:00 ~ 21:00 (가정)",
-        reserveUrl: ""
-    },
-    {
-        name: "마마교자관",
-        category: "중식",
-        lat: 37.3190,
-        lng: 126.8240,
-        desc: "중국식 교자와 다양한 메뉴",
-        phone: "031-491-2888",
-        hours: "10:00 ~ 22:00",
-        reserveUrl: ""
-    }
-    {
-    name: "북경",
-    category: "중식",
-    lat: 37.3217,     // 중앙동(고잔동) 인근 대략적 위도
-    lng: 126.8285,    // 중앙동(고잔동) 인근 대략적 경도
-    desc: "안산 시청 앞 코스요리가 유명한 정통 중식당",
-    phone: "031-411-0331", // (실제 전화번호로 수정 필요)
-    hours: "11:00 ~ 21:00",
-    reserve: ""       // 예약 링크가 있다면 여기에 입력
-}
+    { name:"진원소우 고잔신도시점", category:"한식", lat:37.3175, lng:126.8310, desc:"소고기 · 한식 고기 전문점", phone:"0507-1388-2292", hours:"11:00~22:30", reserve:"" },
+    { name:"카페 나드오프 - 잎새달", category:"카페", lat:37.3310, lng:126.8120, desc:"감성 카페", phone:"정보 없음", hours:"10:00~22:00", reserve:"" },
+    { name:"열이틀", category:"카페", lat:37.3340, lng:126.8150, desc:"조용한 카페", phone:"정보 없음", hours:"10:00~22:00", reserve:"" },
+    { name:"당당초밥", category:"일식", lat:37.3150, lng:126.8380, desc:"초밥 전문점", phone:"0507-1312-5817", hours:"11:00~20:00", reserve:"" },
+    { name:"파앤피하우스", category:"양식", lat:37.3230, lng:126.8270, desc:"파스타 · 피자", phone:"정보 없음", hours:"11:00~21:00", reserve:"" },
+    { name:"마마교자관", category:"중식", lat:37.3190, lng:126.8240, desc:"교자 전문점", phone:"031-491-2888", hours:"10:00~22:00", reserve:"" },
+    { name: "북경", category: "중식", lat: 37.3217, lng: 126.8285, desc: "안산 시청 앞 코스요리가 유명한 정통 중식당", phone: "031-411-0331", hours: "11:00 ~ 21:30", reserve: "" }
 ];
 
-// 마커들 저장
-const markers = [];
-
-stores.forEach((store) => {
-    const marker = L.marker([store.lat, store.lng]).addTo(map);
-    marker.store = store;
-
-    marker.on("click", () => {
-        showStoreInfo(store);
-    });
-
-    markers.push(marker);
+/* ⭐ 마커 생성 */
+const markers = stores.map(store => {
+    const m = L.marker([store.lat, store.lng]).addTo(map);
+    m.store = store; 
+    m.on("click", () => showStore(store));
+    return m;
 });
 
-// 식당 정보 패널 업데이트 (요구사항 3: 전화번호, 영업시간, 예약 버튼)
-function showStoreInfo(store) {
+function showStore(store) {
     storeNameEl.textContent = store.name;
-    storeDescEl.textContent = store.desc || "";
+    storeDescEl.textContent = store.desc;
+    phoneEl.textContent = "전화번호: " + store.phone;
+    hoursEl.textContent = "영업시간: " + store.hours;
 
-    storePhoneEl.textContent = store.phone ? `전화번호: ${store.phone}` : "";
-    storeHoursEl.textContent = store.hours ? `영업시간: ${store.hours}` : "";
-
-    // 예약 버튼 처리
-    if (store.reserveUrl && store.reserveUrl.trim() !== "") {
+    if (store.reserve) {
         reserveBtn.style.display = "inline-block";
-        reserveBtn.textContent = "온라인 예약하기";
-        reserveBtn.onclick = () => {
-            window.open(store.reserveUrl, "_blank");
-        };
-    } else if (store.phone && store.phone !== "정보 없음") {
-        reserveBtn.style.display = "inline-block";
-        reserveBtn.textContent = "전화로 예약하기";
-        reserveBtn.onclick = () => {
-            alert(`${store.name}\n${store.phone}\n\n전화로 예약해 주세요 😊`);
-        };
+        reserveBtn.onclick = () => window.open(store.reserve);
     } else {
         reserveBtn.style.display = "none";
         reserveBtn.onclick = null;
     }
 }
 
-// ★ 요구사항 1: 카테고리별로 마커 필터링
-function filterMarkersByCategory(category) {
-    const visibleLatLngs = [];
+/* ⭐ 카테고리 필터 */
+function filterMarkers(category) {
+    const visible = markers.filter(m =>
+        category === "전체" || m.store.category === category
+    );
 
-    markers.forEach((marker) => {
-        const s = marker.store;
-        const show =
-            category === "전체" || s.category === category;
-
-        if (show) {
-            if (!map.hasLayer(marker)) marker.addTo(map);
-            visibleLatLngs.push(marker.getLatLng());
+    markers.forEach(m => {
+        if (visible.includes(m)) {
+            if (!map.hasLayer(m)) m.addTo(map);
         } else {
-            if (map.hasLayer(marker)) map.removeLayer(marker);
+            if (map.hasLayer(m)) map.removeLayer(m);
         }
     });
-
-    if (visibleLatLngs.length > 0) {
-        const bounds = L.latLngBounds(visibleLatLngs);
-        map.fitBounds(bounds, { padding: [40, 40] });
-
-        const firstStore = markers.find((m) =>
-            category === "전체" || m.store.category === category
-        ).store;
-        showStoreInfo(firstStore);
-    } else {
-        // 해당 카테고리 식당 없을 때
-        storeNameEl.textContent = "등록된 식당이 없습니다";
-        storeDescEl.textContent = "이 카테고리에 등록된 맛집이 아직 없어요.";
-        storePhoneEl.textContent = "";
-        storeHoursEl.textContent = "";
-        reserveBtn.style.display = "none";
-    }
 }
 
-// 카테고리 카드 클릭 → 지도 화면으로 전환 + 필터 적용
-document.querySelectorAll(".category-card").forEach((card) => {
+
+/* ⭐ 검색 기능 로직 */
+
+// 1. 입력할 때 추천 목록 띄우기
+searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.trim();
+    searchSuggestions.innerHTML = ""; 
+
+    if (query.length === 0) {
+        searchSuggestions.style.display = "none";
+        return;
+    }
+
+    const matches = stores.filter(store => 
+        store.name.includes(query)
+    );
+
+    if (matches.length > 0) {
+        searchSuggestions.style.display = "block";
+        matches.forEach(store => {
+            const div = document.createElement("div");
+            div.className = "suggestion-item";
+            div.innerHTML = `<span>${store.name}</span> <span class="s-cat">${store.category}</span>`;
+            
+            div.addEventListener("click", () => {
+                handleSearchSelection(store);
+            });
+            
+            searchSuggestions.appendChild(div);
+        });
+    } else {
+        searchSuggestions.style.display = "none";
+    }
+});
+
+// 2. ⭐ [추가됨] 엔터 키 누르면 첫 번째 결과로 이동
+searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        const query = searchInput.value.trim();
+        if (query.length === 0) return;
+
+        // 현재 입력값으로 다시 검색
+        const matches = stores.filter(store => 
+            store.name.includes(query)
+        );
+
+        if (matches.length > 0) {
+            // 검색 결과 중 첫 번째(0번 인덱스) 식당 선택
+            handleSearchSelection(matches[0]);
+            
+            // 모바일 키보드 내려가게 포커스 해제
+            searchInput.blur();
+        }
+    }
+});
+
+
+// 검색 결과 선택 처리 함수
+function handleSearchSelection(store) {
+    searchInput.value = "";
+    searchSuggestions.style.display = "none";
+
+    // 전체 보기로 전환하여 모든 마커 활성화
+    filterMarkers("전체");
+    selectedTitle.textContent = "검색 결과";
+
+    // 정보 표시 및 이동
+    showStore(store);
+    map.setView([store.lat, store.lng], 17);
+}
+
+
+/* ⭐ 카테고리 클릭 → 지도화면 전환 */
+document.querySelectorAll(".category-card").forEach(card => {
     card.addEventListener("click", () => {
-        const category = card.dataset.category;
+        const cat = card.dataset.category;
 
         categoryScreen.style.display = "none";
         mapScreen.style.display = "block";
+        searchInput.value = ""; 
+        searchSuggestions.style.display = "none";
 
-        if (category === "전체") {
-            selectedCategoryTitle.textContent = "전체 맛집 보기";
+        selectedTitle.textContent =
+            (cat === "전체") ? "전체 맛집" : `${cat} 맛집`;
+
+        filterMarkers(cat);
+
+        const visibleMarkers = markers.filter(m => map.hasLayer(m));
+        if (visibleMarkers.length > 0) {
+            map.setView(visibleMarkers[0].getLatLng(), 16);
+            showStore(visibleMarkers[0].store);
         } else {
-            selectedCategoryTitle.textContent = `${category} 맛집`;
+            storeNameEl.textContent = "검색된 식당이 없습니다";
+            storeDescEl.textContent = "";
+            phoneEl.textContent = "";
+            hoursEl.textContent = "";
+            reserveBtn.style.display = "none";
         }
 
-        filterMarkersByCategory(category);
-
-        // 지도가 처음 보일 때 깨지는 것 방지
-        setTimeout(() => {
-            map.invalidateSize();
-        }, 200);
+        setTimeout(() => map.invalidateSize(), 200);
     });
 });
 
-// 뒤로가기 버튼
 backBtn.addEventListener("click", () => {
     mapScreen.style.display = "none";
     categoryScreen.style.display = "block";
+    map.setView(ANSAN_CENTER, ANSAN_ZOOM);
 });
