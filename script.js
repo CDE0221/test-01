@@ -25,9 +25,10 @@ const map = L.map("map", {
     maxBoundsViscosity: 1.0
 }).setView(ANSAN_CENTER, ANSAN_ZOOM);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 18,
-    minZoom: 12
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom: 18,  
+    minZoom: 12   
 }).addTo(map);
 
 
@@ -42,9 +43,29 @@ const stores = [
     { name: "북경", category: "중식", lat: 37.3217, lng: 126.8285, desc: "안산 시청 앞 코스요리가 유명한 정통 중식당", phone: "031-411-0331", hours: "11:00 ~ 21:30", reserve: "" }
 ];
 
-/* ⭐ 마커 생성 */
+/* ⭐ 이모지 마커 디자인 함수 */
+function getMarkerContent(category) {
+    const icons = {
+        "한식": "🍚", "양식": "🍝", "중식": "🥟",
+        "일식": "🍣", "분식": "🍢", "카페": "☕",
+        "아시안": "🍜", "전체": "😋"
+    };
+    return icons[category] || "🍴";
+}
+
+/* ⭐ 마커 생성 (커스텀 디자인 적용) */
 const markers = stores.map(store => {
-    const m = L.marker([store.lat, store.lng]).addTo(map);
+    // 1. 이모지가 들어간 커스텀 아이콘 생성
+    const customIcon = L.divIcon({
+        className: 'custom-marker',
+        html: `<div class="marker-pin">${getMarkerContent(store.category)}</div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+    });
+
+    // 2. 마커에 아이콘 적용
+    const m = L.marker([store.lat, store.lng], { icon: customIcon }).addTo(map);
+    
     m.store = store; 
     m.on("click", () => showStore(store));
     return m;
