@@ -260,3 +260,33 @@ backBtn.addEventListener("click", () => {
     categoryScreen.style.display = "block";
     map.setView(ANSAN_CENTER, ANSAN_ZOOM);
 });
+/* ⭐ 랜덤 맛집 추천 기능 (룰렛) */
+const randomBtn = document.getElementById("random-btn");
+
+// 버튼이 존재할 때만 실행 (에러 방지)
+if (randomBtn) {
+    randomBtn.addEventListener("click", () => {
+        // 1. 등록된 모든 식당 중 하나를 무작위로 뽑기
+        const randomIndex = Math.floor(Math.random() * stores.length);
+        const randomStore = stores[randomIndex];
+        
+        // 2. 지도 화면으로 강제 이동
+        categoryScreen.style.display = "none";
+        mapScreen.style.display = "block";
+        
+        // 3. 타이틀을 '랜덤 추천'으로 변경
+        selectedTitle.textContent = "🎲 오늘의 운명은?";
+        
+        // 4. 지도에 모든 마커 표시 (그래야 이동 가능)
+        filterMarkers("전체");
+        
+        // 5. 뽑힌 식당 위치로 지도 줌인 & 정보창 열기
+        map.setView([randomStore.lat, randomStore.lng], 16);
+        showStore(randomStore);
+        
+        // 6. 사용자가 헷갈리지 않게 알림창 띄우기
+        setTimeout(() => {
+            alert(`오늘의 추천 맛집은 [${randomStore.name}] 입니다! \n(${randomStore.category} - ${randomStore.desc})`);
+        }, 300);
+    });
+}

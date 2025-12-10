@@ -3,10 +3,6 @@ body {
     margin: 0;
     /* 👇 화사한 파스텔톤 그라데이션 배경 적용! */
     background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
-    /* 만약 더 알록달록한 걸 원하시면 아래 코드로 바꿔보세요! */
-    /* background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%); (살구색 그라데이션) */
-    /* background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%); (보라+핑크 그라데이션) */
-    
     font-family: "Noto Sans KR", sans-serif;
     min-height: 100vh; /* 화면 전체에 배경이 꽉 차도록 설정 */
 }
@@ -263,4 +259,50 @@ body {
 .custom-marker:hover .marker-pin {
     transform: scale(1.1) translateY(-8px);
     border-color: #3e86f5;
+}
+/* ⭐ 랜덤 추천 섹션 디자인 */
+.random-pick-section {
+    margin-top: 50px;       /* 위쪽 카드들과 거리 벌리기 */
+    text-align: center;     /* 가운데 정렬 */
+    animation: fadeInUp 1s ease-out; /* 부드럽게 등장하는 애니메이션 */
+    padding-bottom: 50px;   /* 바닥 여백 확보 */
+}
+
+.random-text {
+    font-size: 15px;
+    color: #fff;            /* 배경이 진하니까 글자는 흰색으로 */
+    margin-bottom: 15px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 🎲 랜덤 버튼 디자인 (핵심!) */
+.random-btn {
+    background: white;      /* 깔끔한 흰색 배경 */
+    border: none;
+    padding: 15px 35px;     /* 버튼 크기 넉넉하게 */
+    font-size: 18px;
+    font-weight: 800;       /* 글자 굵게 */
+    color: #333;
+    border-radius: 50px;    /* 둥글둥글한 알약 모양 */
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 그림자 */
+    transition: all 0.3s ease; /* 움직임 부드럽게 */
+    
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 마우스 올렸을 때 효과 (인터랙션) */
+.random-btn:hover {
+    transform: translateY(-5px) scale(1.05); /* 위로 살짝 뜨면서 커짐 */
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4); /* 흰색 후광 효과 */
+    color: #a18cd1; /* 글자색을 배경색과 깔맞춤 */
+}
+
+/* 등장 애니메이션 정의 */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
