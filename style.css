@@ -1,10 +1,15 @@
 * { box-sizing: border-box; }
 body {
     margin: 0;
-    background: #f3f4f6;
+    /* 👇 화사한 파스텔톤 그라데이션 배경 적용! */
+    background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+    /* 만약 더 알록달록한 걸 원하시면 아래 코드로 바꿔보세요! */
+    /* background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%); (살구색 그라데이션) */
+    /* background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%); (보라+핑크 그라데이션) */
+    
     font-family: "Noto Sans KR", sans-serif;
+    min-height: 100vh; /* 화면 전체에 배경이 꽉 차도록 설정 */
 }
-
 /* ───────── 첫 화면 ───────── */
 
 #category-screen {
