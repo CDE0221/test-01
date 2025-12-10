@@ -59,8 +59,8 @@ const markers = stores.map(store => {
     const customIcon = L.divIcon({
         className: 'custom-marker',
         html: `<div class="marker-pin">${getMarkerContent(store.category)}</div>`,
-        iconSize: [40, 40],
-        iconAnchor: [20, 40]
+        iconSize: [60, 60],
+        iconAnchor: [30, 60]
     });
 
     // 2. 마커에 아이콘 적용
