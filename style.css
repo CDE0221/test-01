@@ -686,3 +686,228 @@ button:focus-visible, .toggle-btn:focus-visible{
     max-height: none;
   }
 }
+/* =========================
+   ✅ Minimal (Apple-like) polish pack
+   - paste at END of style.css
+   ========================= */
+
+:root{
+  --bg: #f9fafb;
+  --card: rgba(255,255,255,0.92);
+  --card-solid: #ffffff;
+  --border: rgba(15,23,42,0.08);
+  --shadow-sm: 0 8px 22px rgba(15,23,42,0.06);
+  --shadow-md: 0 16px 40px rgba(15,23,42,0.10);
+  --text: #0f172a;
+  --muted: #64748b;
+
+  /* 보라 포인트 */
+  --accent: #8b5cf6;
+  --accent-2: #7c3aed;
+  --ring: rgba(139,92,246,0.22);
+}
+
+/* 전체 배경 더 "프레임" 느낌 */
+body{
+  background:
+    radial-gradient(1200px 500px at 50% -120px, rgba(139,92,246,0.10), transparent 60%),
+    radial-gradient(900px 380px at 10% 10%, rgba(139,92,246,0.06), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+
+/* 텍스트 렌더링 선명하게 */
+body, button, input, textarea{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- 첫 화면 헤더 정리 ---------- */
+#category-screen{
+  padding-top: 56px;
+  gap: 10px;
+}
+
+#category-screen h1{
+  letter-spacing: -0.02em;
+}
+
+#category-screen p{
+  color: var(--muted);
+}
+
+/* 카드 그리드: 살짝 더 촘촘 + 고급스러운 테두리 */
+.card-grid{
+  gap: 18px;
+}
+
+.category-card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+}
+
+.category-card:hover{
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(139,92,246,0.25);
+}
+
+/* 카드 안 텍스트 정리 */
+.title{
+  letter-spacing: -0.01em;
+}
+.desc{
+  color: var(--muted);
+}
+
+/* ---------- 랜덤 추천 영역: 미니멀 버튼 ---------- */
+.random-text{
+  color: var(--muted);
+}
+
+.random-btn{
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.random-btn:hover{
+  box-shadow: 0 18px 45px rgba(139,92,246,0.20);
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* ---------- 지도 화면: 상단바/인풋/버튼 통일감 ---------- */
+#map-screen{
+  padding-top: 18px;
+}
+
+.top-bar{
+  align-items: center;
+}
+
+/* 뒤로가기 버튼: 애플식 pill */
+#back-btn{
+  background: var(--card-solid);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+#back-btn:hover{
+  border-color: rgba(139,92,246,0.25);
+  box-shadow: 0 14px 32px rgba(15,23,42,0.10);
+}
+
+/* 검색 input: 미니멀 + 포커스 링 */
+#search-input{
+  background: rgba(255,255,255,0.88);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+}
+#search-input:focus{
+  border-color: rgba(139,92,246,0.55);
+  box-shadow: 0 0 0 4px var(--ring), 0 10px 24px rgba(15,23,42,0.08);
+}
+
+/* 자동완성: 더 깔끔하게 */
+#search-suggestions{
+  border: 1px solid var(--border);
+  box-shadow: 0 22px 60px rgba(15,23,42,0.12);
+}
+.suggestion-item{
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+.suggestion-item:hover{
+  background: rgba(139,92,246,0.08);
+}
+
+/* ---------- 지도/패널: "프레임" 느낌 ---------- */
+#map{
+  box-shadow: 0 22px 60px rgba(15,23,42,0.14);
+  border: 1px solid rgba(15,23,42,0.06);
+}
+
+#info-panel{
+  border: 1px solid rgba(15,23,42,0.06);
+  box-shadow: 0 22px 60px rgba(15,23,42,0.10);
+}
+
+/* 스크롤바 미니멀(크롬/엣지) */
+#info-panel::-webkit-scrollbar{
+  width: 10px;
+}
+#info-panel::-webkit-scrollbar-thumb{
+  background: rgba(15,23,42,0.10);
+  border-radius: 999px;
+  border: 3px solid rgba(255,255,255,0.8);
+}
+#info-panel::-webkit-scrollbar-track{
+  background: transparent;
+}
+
+/* 섹션 타이틀 포인트 통일 */
+#selected-category-title{
+  color: var(--accent);
+}
+
+/* 예약 버튼: 보라 포인트 + 더 매끈한 모션 */
+#reserve-btn{
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 24px rgba(139,92,246,0.26);
+}
+#reserve-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(139,92,246,0.32);
+}
+
+/* ---------- 마커: 보라 포인트 ---------- */
+.marker-pin{
+  border: 2px solid rgba(15,23,42,0.06);
+  box-shadow: 0 16px 35px rgba(15,23,42,0.22);
+}
+.custom-marker:hover .marker-pin{
+  border-color: rgba(139,92,246,0.55);
+}
+
+/* ---------- 리뷰 섹션: 카드 정돈 ---------- */
+#review-section{
+  background: rgba(249,250,251,0.9);
+  border: 1px solid rgba(15,23,42,0.08);
+}
+
+#review-text{
+  border: 1px solid rgba(15,23,42,0.10);
+}
+#review-text:focus{
+  border-color: rgba(139,92,246,0.55);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+#submit-review{
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 24px rgba(139,92,246,0.26);
+}
+#submit-review:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(139,92,246,0.32);
+}
+
+/* 리뷰 카드도 더 미니멀하게 */
+.review-item{
+  box-shadow: 0 10px 26px rgba(15,23,42,0.06);
+}
+
+/* ---------- 공통: 클릭/포커스 접근성 ---------- */
+button:focus-visible,
+.category-card:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
+  border-color: rgba(139,92,246,0.55);
+  border-radius: 12px;
+}
+
+/* ---------- 모션 줄이기(사용자 설정 존중) ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{ transition: none !important; animation: none !important; }
+}
