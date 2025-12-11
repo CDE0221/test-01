@@ -20,6 +20,15 @@ const reviewTextEl = document.getElementById("review-text");
 const submitReviewBtn = document.getElementById("submit-review");
 const reviewListEl = document.getElementById("review-list");
 
+/* ✅ (추가) 리스트/정렬 UI 요소 (index.html에 추가해둔 것과 연결) */
+const viewMapBtn = document.getElementById("view-map-btn");
+const viewListBtn = document.getElementById("view-list-btn");
+const sortSelect = document.getElementById("sort-select");
+
+const listPanel = document.getElementById("list-panel");
+const storeListEl = document.getElementById("store-list");
+const emptyStateEl = document.getElementById("empty-state");
+
 /* ⭐ 안산 중심 & 범위 제한 */
 const ANSAN_CENTER = [37.3189, 126.8375];
 const ANSAN_ZOOM = 14;
@@ -102,135 +111,166 @@ const stores = [
     { name: "명랑핫도그 상록수점", category: "분식", lat: 37.3020, lng: 126.8660, desc: "바삭하고 쫄깃한 쌀 핫도그", phone: "031-406-0601", hours: "11:00~22:00", reserve: "" },
 
     // ───────── 아시안 (다은 담당) ─────────
-    { 
-        name: "드렁킨타이 안산초지점", 
-        category: "아시안", 
-        lat: 37.30830,  
-        lng: 126.8166, 
-        desc: "태국 길거리 음식 감성의 타이 레스토랑", 
-        phone: "031-414-9593", 
-        hours: "11:00~22:00", 
-        reserve: "" 
+    {
+        name: "드렁킨타이 안산초지점",
+        category: "아시안",
+        lat: 37.30830,
+        lng: 126.8166,
+        desc: "태국 길거리 음식 감성의 타이 레스토랑",
+        phone: "031-414-9593",
+        hours: "11:00~22:00",
+        reserve: ""
     },
-    { 
-        name: "포메인 안산중앙점", 
-        category: "아시안", 
+    {
+        name: "포메인 안산중앙점",
+        category: "아시안",
         lat: 37.31967,
-        lng: 126.8365, 
-        desc: "베트남 쌀국수 전문 체인점, 중앙동 메가박스 건물 3층", 
-        phone: "031-413-7758", 
-        hours: "11:00~21:00", 
-        reserve: "" 
+        lng: 126.8365,
+        desc: "베트남 쌀국수 전문 체인점, 중앙동 메가박스 건물 3층",
+        phone: "031-413-7758",
+        hours: "11:00~21:00",
+        reserve: ""
     },
-    { 
-        name: "연제네 안산본점", 
-        category: "아시안", 
-        lat: 37.31023, 
-        lng: 126.8305, 
-        desc: "쌀국수와 분짜 등 다양한 아시안 메뉴를 즐길 수 있는 맛집", 
-        phone: "", 
-        hours: "11:00~21:30", 
-        reserve: "https://app.catchtable.co.kr/ct/shop/yeonjene" 
+    {
+        name: "연제네 안산본점",
+        category: "아시안",
+        lat: 37.31023,
+        lng: 126.8305,
+        desc: "쌀국수와 분짜 등 다양한 아시안 메뉴를 즐길 수 있는 맛집",
+        phone: "",
+        hours: "11:00~21:30",
+        reserve: "https://app.catchtable.co.kr/ct/shop/yeonjene"
     },
-    { 
-        name: "남월 쌀국수 안산한양대 본점", 
-        category: "아시안", 
-        lat: 37.30158,  
-        lng: 126.8383, 
-        desc: "한양대 에리카 근처 학생들에게 인기 많은 쌀국수집", 
-        phone: "031-407-5021", 
-        hours: "10:00~21:00", 
-        reserve: "" 
+    {
+        name: "남월 쌀국수 안산한양대 본점",
+        category: "아시안",
+        lat: 37.30158,
+        lng: 126.8383,
+        desc: "한양대 에리카 근처 학생들에게 인기 많은 쌀국수집",
+        phone: "031-407-5021",
+        hours: "10:00~21:00",
+        reserve: ""
     },
 
     // ───────── 한식 (다은 담당) ─────────
-    { 
-        name: "정든집", 
-        category: "한식", 
-        lat: 37.31411, 
-        lng: 126.8922, 
-        desc: "시골 밥상 느낌의 한식 백반집", 
-        phone: "031-437-2678", 
-        hours: "11:30~21:00", 
-        reserve: "" 
+    {
+        name: "정든집",
+        category: "한식",
+        lat: 37.31411,
+        lng: 126.8922,
+        desc: "시골 밥상 느낌의 한식 백반집",
+        phone: "031-437-2678",
+        hours: "11:30~21:00",
+        reserve: ""
     },
-    { 
-        name: "시골순대", 
-        category: "한식", 
+    {
+        name: "시골순대",
+        category: "한식",
         lat: 37.30329,
-        lng: 126.8612, 
-        desc: "순댓국과 머릿고기가 인기인 순대 전문점", 
-        phone: "031-418-3352", 
-        hours: "10:00~20:50", 
-        reserve: "" 
+        lng: 126.8612,
+        desc: "순댓국과 머릿고기가 인기인 순대 전문점",
+        phone: "031-418-3352",
+        hours: "10:00~20:50",
+        reserve: ""
     },
-    { 
-        name: "대궐막국수 안산본점", 
-        category: "한식", 
+    {
+        name: "대궐막국수 안산본점",
+        category: "한식",
         lat: 37.30323,
-        lng: 126.8536, 
-        desc: "막국수와 편육이 유명한 한식 전문점", 
-        phone: "031-417-1555", 
-        hours: "10:50~20:30", 
-        reserve: "https://app.catchtable.co.kr/ct/shop/daegual_ansan" 
+        lng: 126.8536,
+        desc: "막국수와 편육이 유명한 한식 전문점",
+        phone: "031-417-1555",
+        hours: "10:50~20:30",
+        reserve: "https://app.catchtable.co.kr/ct/shop/daegual_ansan"
     },
-    { 
-        name: "산촌칼국수", 
-        category: "한식", 
-        lat: 37.29698, 
-        lng: 126.8679, 
-        desc: "칼국수와 수제비가 메인인 따끈한 국물 맛집", 
-        phone: "031-406-8569", 
-        hours: "11:30~20:40", 
-        reserve: "" 
+    {
+        name: "산촌칼국수",
+        category: "한식",
+        lat: 37.29698,
+        lng: 126.8679,
+        desc: "칼국수와 수제비가 메인인 따끈한 국물 맛집",
+        phone: "031-406-8569",
+        hours: "11:30~20:40",
+        reserve: ""
     },
-    { 
-        name: "송탄나여사부대찌개", 
-        category: "한식", 
-        lat: 37.30900, 
-        lng: 126.8109, 
-        desc: "부대찌개와 철판볶음이 유명한 부대찌개 전문점", 
-        phone: "", 
-        hours: "10:00~21:00", 
-        reserve: "" 
+    {
+        name: "송탄나여사부대찌개",
+        category: "한식",
+        lat: 37.30900,
+        lng: 126.8109,
+        desc: "부대찌개와 철판볶음이 유명한 부대찌개 전문점",
+        phone: "",
+        hours: "10:00~21:00",
+        reserve: ""
     },
-    { 
-        name: "영월에곤드레", 
-        category: "한식", 
-        lat: 37.34614, 
-        lng: 126.8303, 
-        desc: "곤드레밥과 한식 반찬이 잘 나오는 건강식당", 
-        phone: "031-403-3015", 
-        hours: "11:00~21:00", 
-        reserve: "" 
+    {
+        name: "영월에곤드레",
+        category: "한식",
+        lat: 37.34614,
+        lng: 126.8303,
+        desc: "곤드레밥과 한식 반찬이 잘 나오는 건강식당",
+        phone: "031-403-3015",
+        hours: "11:00~21:00",
+        reserve: ""
     },
-    { 
-        name: "시랑면옥", 
-        category: "한식", 
-        lat: 37.33477,  
-        lng: 126.8541, 
-        desc: "냉면과 온면이 인기 메뉴인 면 요리 전문점", 
-        phone: "031-486-1101", 
-        hours: "11:00~20:00", 
-        reserve: "" 
+    {
+        name: "시랑면옥",
+        category: "한식",
+        lat: 37.33477,
+        lng: 126.8541,
+        desc: "냉면과 온면이 인기 메뉴인 면 요리 전문점",
+        phone: "031-486-1101",
+        hours: "11:00~20:00",
+        reserve: ""
     }
 ];
 
-/* ⭐ 리뷰 데이터 저장용 (새로고침하면 초기화됨) */
-let currentStoreName = null;
-const reviewStore = {};  // { "식당이름": [ {rating, text, date}, ... ] }
+/* ✅ (중요) 전역 상태: 현재 카테고리 기억 (리스트에도 똑같이 반영) */
+let currentCategory = null;
 
-/* 별 클릭 시 색칠하기 */
+/* ✅ 리뷰 데이터: localStorage 저장(새로고침해도 유지) */
+const REVIEWS_KEY = "ansan_reviews_v1";
+let currentStoreName = null;
+
+function loadReviewStore() {
+    try {
+        const raw = localStorage.getItem(REVIEWS_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") return parsed;
+        return {};
+    } catch {
+        return {};
+    }
+}
+function saveReviewStore() {
+    try {
+        localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviewStore));
+    } catch {
+        // 저장 실패해도 앱이 죽지 않게
+    }
+}
+
+/* ⭐ { "식당이름": [ {rating, text, date}, ... ] } */
+const reviewStore = loadReviewStore();
+
+/* ⭐ 별 클릭 시 색칠하기 */
 function setStarActive(count) {
     if (!starRatingEl) return;
     const stars = Array.from(starRatingEl.querySelectorAll("span"));
     stars.forEach((star, idx) => {
-        if (idx < count) {
-            star.classList.add("active");
-        } else {
-            star.classList.remove("active");
-        }
+        if (idx < count) star.classList.add("active");
+        else star.classList.remove("active");
     });
+}
+
+/* ✅ 평균 별점/리뷰 수 계산 (정렬/리스트 표시용) */
+function getReviewStats(storeName) {
+    const list = reviewStore[storeName] || [];
+    const count = list.length;
+    if (count === 0) return { avg: 0, count: 0 };
+    const sum = list.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+    return { avg: sum / count, count };
 }
 
 /* 특정 식당의 리뷰 목록 렌더링 */
@@ -238,7 +278,6 @@ function renderReviews(storeName) {
     if (!reviewListEl) return;
 
     reviewListEl.innerHTML = "";
-
     const list = reviewStore[storeName] || [];
 
     if (list.length === 0) {
@@ -298,17 +337,21 @@ const markers = stores.map(store => {
     });
 
     const m = L.marker([store.lat, store.lng], { icon: customIcon }).addTo(map);
-    
-    m.store = store; 
-    m.on("click", () => showStore(store));
+
+    m.store = store;
+    m.on("click", () => {
+        showStore(store);
+        // ✅ 리스트 뷰에서 마커 클릭했어도 리스트 하이라이트 갱신
+        renderStoreList();
+    });
     return m;
 });
 
 function showStore(store) {
     storeNameEl.textContent = store.name;
     storeDescEl.textContent = store.desc;
-    phoneEl.textContent = "전화번호: " + store.phone;
-    hoursEl.textContent = "영업시간: " + store.hours;
+    phoneEl.textContent = "전화번호: " + (store.phone || "정보 없음");
+    hoursEl.textContent = "영업시간: " + (store.hours || "정보 없음");
 
     if (store.reserve) {
         reserveBtn.style.display = "inline-block";
@@ -339,20 +382,138 @@ function filterMarkers(category) {
     });
 }
 
+/* ✅ 현재 화면에 보이는(필터 적용된) store 목록 얻기 */
+function getVisibleStoresByCategory() {
+    const visibleMarkers = markers.filter(m => map.hasLayer(m));
+    return visibleMarkers.map(m => m.store);
+}
+
+/* ✅ 정렬 적용 */
+function sortStores(list) {
+    const mode = sortSelect ? sortSelect.value : "default";
+    const arr = [...list];
+
+    if (mode === "rating_desc") {
+        arr.sort((a, b) => {
+            const A = getReviewStats(a.name).avg;
+            const B = getReviewStats(b.name).avg;
+            if (B !== A) return B - A;
+            // 동점이면 리뷰 많은 순
+            return getReviewStats(b.name).count - getReviewStats(a.name).count;
+        });
+    } else if (mode === "reviews_desc") {
+        arr.sort((a, b) => getReviewStats(b.name).count - getReviewStats(a.name).count);
+    } else if (mode === "name_asc") {
+        arr.sort((a, b) => a.name.localeCompare(b.name, "ko"));
+    } else {
+        // default: stores 원본 순서 유지
+        // (현재 리스트는 map layer 순서에 영향받을 수 있어, 원본 배열 기준으로 재정렬)
+        const indexMap = new Map(stores.map((s, i) => [s.name, i]));
+        arr.sort((a, b) => (indexMap.get(a.name) ?? 99999) - (indexMap.get(b.name) ?? 99999));
+    }
+
+    return arr;
+}
+
+/* ✅ 리스트 렌더링 */
+function renderStoreList() {
+    if (!storeListEl || !listPanel) return;
+
+    // 필터 적용된 visible stores 기준
+    const visibleStores = getVisibleStoresByCategory();
+    const sorted = sortStores(visibleStores);
+
+    storeListEl.innerHTML = "";
+
+    if (emptyStateEl) {
+        emptyStateEl.style.display = (sorted.length === 0) ? "block" : "none";
+    }
+
+    sorted.forEach(store => {
+        const { avg, count } = getReviewStats(store.name);
+
+        const item = document.createElement("div");
+        item.className = "store-list-item";
+        if (currentStoreName === store.name) item.classList.add("active");
+
+        item.innerHTML = `
+            <div class="sli-top">
+                <div class="sli-title">${store.name}</div>
+                <div class="sli-badge">${store.category}</div>
+            </div>
+            <div class="sli-desc">${store.desc || ""}</div>
+            <div class="sli-meta">
+                <span class="sli-stars">★ ${avg ? avg.toFixed(1) : "0.0"}</span>
+                <span class="sli-reviews">리뷰 ${count}</span>
+            </div>
+        `;
+
+        item.addEventListener("click", () => {
+            // 지도/정보패널 이동
+            showStore(store);
+            map.setView([store.lat, store.lng], 17);
+
+            // 리스트 하이라이트 갱신
+            renderStoreList();
+
+            // 리스트에서 눌러도 "지도 보기"로 자동 전환은 안 함 (원하면 켜줄 수도)
+        });
+
+        storeListEl.appendChild(item);
+    });
+}
+
+/* ✅ 지도/리스트 뷰 토글 */
+function setViewMode(mode) {
+    const isMap = mode === "map";
+
+    if (isMap) {
+        if (listPanel) listPanel.style.display = "none";
+        if (document.getElementById("map")) document.getElementById("map").style.display = "block";
+        if (document.getElementById("info-panel")) document.getElementById("info-panel").style.display = "flex";
+
+        if (viewMapBtn) viewMapBtn.classList.add("active");
+        if (viewListBtn) viewListBtn.classList.remove("active");
+
+        // 지도 깨짐 방지
+        setTimeout(() => map.invalidateSize(), 150);
+    } else {
+        if (listPanel) listPanel.style.display = "block";
+        if (document.getElementById("map")) document.getElementById("map").style.display = "none";
+        if (document.getElementById("info-panel")) document.getElementById("info-panel").style.display = "none";
+
+        if (viewMapBtn) viewMapBtn.classList.remove("active");
+        if (viewListBtn) viewListBtn.classList.add("active");
+
+        renderStoreList();
+    }
+}
+
+/* ✅ 토글/정렬 이벤트 연결 */
+if (viewMapBtn && viewListBtn) {
+    viewMapBtn.addEventListener("click", () => setViewMode("map"));
+    viewListBtn.addEventListener("click", () => setViewMode("list"));
+}
+if (sortSelect) {
+    sortSelect.addEventListener("change", () => {
+        // 현재 리스트 뷰면 즉시 반영
+        if (listPanel && listPanel.style.display !== "none") renderStoreList();
+    });
+}
 
 /* ⭐ 검색 기능 로직 */
 
 // 1. 입력할 때 추천 목록 띄우기
 searchInput.addEventListener("input", (e) => {
     const query = e.target.value.trim();
-    searchSuggestions.innerHTML = ""; 
+    searchSuggestions.innerHTML = "";
 
     if (query.length === 0) {
         searchSuggestions.style.display = "none";
         return;
     }
 
-    const matches = stores.filter(store => 
+    const matches = stores.filter(store =>
         store.name.includes(query)
     );
 
@@ -362,11 +523,11 @@ searchInput.addEventListener("input", (e) => {
             const div = document.createElement("div");
             div.className = "suggestion-item";
             div.innerHTML = `<span>${store.name}</span> <span class="s-cat">${store.category}</span>`;
-            
+
             div.addEventListener("click", () => {
                 handleSearchSelection(store);
             });
-            
+
             searchSuggestions.appendChild(div);
         });
     } else {
@@ -380,7 +541,7 @@ searchInput.addEventListener("keydown", (e) => {
         const query = searchInput.value.trim();
         if (query.length === 0) return;
 
-        const matches = stores.filter(store => 
+        const matches = stores.filter(store =>
             store.name.includes(query)
         );
 
@@ -395,11 +556,16 @@ function handleSearchSelection(store) {
     searchInput.value = "";
     searchSuggestions.style.display = "none";
 
+    // 검색은 전체로 전환
+    currentCategory = "전체";
     filterMarkers("전체");
     selectedTitle.textContent = "검색 결과";
 
+    // 지도 모드에서는 이동, 리스트 모드에서는 리스트에도 반영되도록
     showStore(store);
     map.setView([store.lat, store.lng], 17);
+
+    renderStoreList();
 }
 
 /* ⭐ 카테고리 클릭 → 지도화면 전환 */
@@ -407,9 +573,11 @@ document.querySelectorAll(".category-card").forEach(card => {
     card.addEventListener("click", () => {
         const cat = card.dataset.category;
 
+        currentCategory = cat;
+
         categoryScreen.style.display = "none";
         mapScreen.style.display = "block";
-        searchInput.value = ""; 
+        searchInput.value = "";
         searchSuggestions.style.display = "none";
 
         selectedTitle.textContent =
@@ -427,16 +595,27 @@ document.querySelectorAll(".category-card").forEach(card => {
             phoneEl.textContent = "";
             hoursEl.textContent = "";
             reserveBtn.style.display = "none";
+            currentStoreName = null;
         }
 
+        // ✅ 리스트도 같이 갱신
+        renderStoreList();
+
         setTimeout(() => map.invalidateSize(), 200);
+
+        // ✅ 카테고리 누르면 기본은 지도 모드로
+        setViewMode("map");
     });
 });
 
 backBtn.addEventListener("click", () => {
     mapScreen.style.display = "none";
-    categoryScreen.style.display = "block";
+    categoryScreen.style.display = "flex";
     map.setView(ANSAN_CENTER, ANSAN_ZOOM);
+
+    // ✅ 리스트/정렬 초기화(원하면 유지해도 됨)
+    if (sortSelect) sortSelect.value = "default";
+    setViewMode("map");
 });
 
 /* ⭐ 별점 클릭 & 리뷰 등록 이벤트 */
@@ -481,11 +660,17 @@ if (starRatingEl && submitReviewBtn) {
             date: dateStr
         });
 
+        // ✅ localStorage 저장
+        saveReviewStore();
+
         // 입력창 초기화 + 별 초기화 + 리스트 다시 렌더링
         reviewTextEl.value = "";
         selectedRating = 0;
         setStarActive(0);
         renderReviews(currentStoreName);
+
+        // ✅ 리스트에도 평균/리뷰수 즉시 반영
+        renderStoreList();
     });
 }
 
@@ -496,19 +681,28 @@ if (randomBtn) {
     randomBtn.addEventListener("click", () => {
         const randomIndex = Math.floor(Math.random() * stores.length);
         const randomStore = stores[randomIndex];
-        
+
         categoryScreen.style.display = "none";
         mapScreen.style.display = "block";
-        
+
+        currentCategory = "전체";
         selectedTitle.textContent = "🎲 오늘의 운명은?";
-        
+
         filterMarkers("전체");
-        
+
+        // 지도 모드로 보여주고 이동
+        setViewMode("map");
         map.setView([randomStore.lat, randomStore.lng], 16);
         showStore(randomStore);
-        
+
+        // 리스트도 최신화
+        renderStoreList();
+
         setTimeout(() => {
             alert(`오늘의 추천 맛집은 [${randomStore.name}] 입니다! \n(${randomStore.category} - ${randomStore.desc})`);
         }, 300);
     });
 }
+
+/* ✅ 첫 로드 시 기본값 */
+setViewMode("map");

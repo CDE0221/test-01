@@ -470,3 +470,219 @@ body {
     text-align: center;
     margin-top: 15px;
 }
+/* ─────────────────────────────────── */
+/* ✅ 지도/리스트 토글 + 정렬 UI */
+/* ─────────────────────────────────── */
+
+.view-controls{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.view-toggle{
+  display:flex;
+  background:#f3f4f6;
+  padding:4px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+.toggle-btn{
+  border:none;
+  background:transparent;
+  padding:8px 12px;
+  border-radius: 999px;
+  cursor:pointer;
+  font-weight:800;
+  font-size: 13px;
+  color:#4b5563;
+  transition: 0.2s;
+}
+
+.toggle-btn:hover{
+  background:#ffffff;
+}
+
+.toggle-btn.active{
+  background:#ffffff;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+  color:#7c3aed;
+}
+
+.sort-select{
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+  font-weight: 800;
+  font-size: 13px;
+  outline: none;
+  color:#4b5563;
+  transition: 0.2s;
+}
+
+.sort-select:focus{
+  border-color:#a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
+}
+
+/* ─────────────────────────────────── */
+/* ✅ 리스트 패널 (맛집 목록) */
+/* ─────────────────────────────────── */
+
+#list-panel{
+  flex: 4;
+  max-height: 520px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px 18px;
+  box-shadow: 0 18px 40px rgba(15,23,42,0.07);
+  display: none;            /* 처음엔 숨김 (JS가 토글) */
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+#list-header{
+  padding: 2px 2px 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+#list-title{
+  font-size: 18px;
+  font-weight: 900;
+  color: #111827;
+}
+
+#list-subtitle{
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+#store-list{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding-right: 4px;
+  max-height: 420px;
+}
+
+/* 리스트 스크롤바 (예쁘게) */
+#store-list::-webkit-scrollbar{
+  width: 10px;
+}
+#store-list::-webkit-scrollbar-thumb{
+  background: #e5e7eb;
+  border-radius: 999px;
+  border: 3px solid #ffffff;
+}
+#store-list::-webkit-scrollbar-thumb:hover{
+  background: #c4b5fd;
+}
+
+/* 리스트 아이템 카드 */
+.store-list-item{
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  background: #ffffff;
+}
+
+.store-list-item:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+  border-color: rgba(124, 58, 237, 0.25);
+}
+
+.store-list-item.active{
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
+}
+
+.sli-top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sli-title{
+  font-weight: 900;
+  font-size: 15px;
+  color:#111827;
+  line-height: 1.2;
+}
+
+.sli-badge{
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.sli-desc{
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+.sli-meta{
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.sli-stars{
+  color: #f59e0b;
+  font-weight: 900;
+}
+
+.sli-reviews{
+  color: #6b7280;
+  font-weight: 700;
+}
+
+#empty-state{
+  border: 1px dashed #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  color: #6b7280;
+  text-align: center;
+  background: #fafafa;
+}
+
+/* ─────────────────────────────────── */
+/* ✅ 전체적으로 “앱 느낌” 디테일 몇 개 */
+/* ─────────────────────────────────── */
+
+/* 클릭 가능한 요소들 탭 하이라이트 제거(모바일) */
+button, .category-card, .store-list-item{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 포커스 링 통일 */
+button:focus-visible, .toggle-btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
+}
+
+/* 모바일에서 리스트/패널도 자연스럽게 */
+@media (max-width: 768px){
+  #list-panel{
+    max-height: none;
+  }
+  #store-list{
+    max-height: none;
+  }
+}

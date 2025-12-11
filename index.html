@@ -6,14 +6,13 @@
     <title>안산 맛집 지도</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+    <!-- ✅ 첫 화면 -->
     <div id="category-screen">
         <h1>안산 맛집 지도 😋</h1>
         <p>오늘 뭐 먹지? 메뉴를 골라보세요.</p>
@@ -60,23 +59,38 @@
                 <span class="desc">모든 맛집 보기</span>
             </div>
         </div>
-    </div>
-</div> 
 
-    <div class="random-pick-section">
-        <p class="random-text">메뉴 고르기가 너무 힘들다면?</p>
-        <button id="random-btn" class="random-btn">
-            <span>🎲</span> 운에 맡기기 (랜덤 추천)
-        </button>
+        <div class="random-pick-section">
+            <p class="random-text">메뉴 고르기가 너무 힘들다면?</p>
+            <button id="random-btn" class="random-btn">
+                <span>🎲</span> 운에 맡기기 (랜덤 추천)
+            </button>
+        </div>
     </div>
 
+    <!-- ✅ 지도 화면 -->
     <div id="map-screen">
         <div class="top-bar">
             <button id="back-btn">⬅ 메뉴 선택</button>
-            
+
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="식당 이름 검색 (예: 초밥, 파스타...)">
                 <div id="search-suggestions"></div>
+            </div>
+
+            <!-- ✅ (추가) 보기 전환 + 정렬 -->
+            <div class="view-controls">
+                <div class="view-toggle">
+                    <button id="view-map-btn" class="toggle-btn active">🗺 지도</button>
+                    <button id="view-list-btn" class="toggle-btn">📋 리스트</button>
+                </div>
+
+                <select id="sort-select" class="sort-select">
+                    <option value="default">정렬: 기본</option>
+                    <option value="rating_desc">정렬: 별점 높은 순</option>
+                    <option value="reviews_desc">정렬: 리뷰 많은 순</option>
+                    <option value="name_asc">정렬: 이름 가나다순</option>
+                </select>
             </div>
         </div>
 
@@ -111,6 +125,21 @@
                     </div>
                 </div>
                 <!-- ⭐ 리뷰 섹션 끝 -->
+            </div>
+
+            <!-- ✅ (추가) 리스트 뷰 패널 -->
+            <div id="list-panel" style="display:none;">
+                <div id="list-header">
+                    <div id="list-title">📋 맛집 리스트</div>
+                    <div id="list-subtitle">정렬/검색/카테고리 필터가 적용된 결과가 표시돼요</div>
+                </div>
+
+                <div id="empty-state" style="display:none;">
+                    😢 표시할 맛집이 없어요. <br>
+                    다른 카테고리를 선택하거나 검색어를 바꿔보세요.
+                </div>
+
+                <div id="store-list"></div>
             </div>
         </div>
     </div>
