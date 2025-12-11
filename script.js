@@ -13,17 +13,12 @@ const reserveBtn = document.getElementById("reserve-btn");
 const searchInput = document.getElementById("search-input");
 const searchSuggestions = document.getElementById("search-suggestions");
 
-/* ⭐ 리뷰 & 별점 관련 요소 */
-const starContainer = document.getElementById("star-rating");
-const reviewText = document.getElementById("review-text");
+/* ⭐ 리뷰 관련 요소 */
+const reviewSection = document.getElementById("review-section");
+const starRatingEl = document.getElementById("star-rating");
+const reviewTextEl = document.getElementById("review-text");
 const submitReviewBtn = document.getElementById("submit-review");
-const reviewList = document.getElementById("review-list");
-
-// 현재 선택된 별점 + 가게 이름
-let currentRating = 0;
-let currentStoreName = null;
-// { "가게이름": [ {rating: 5, text: "...", date: "..."} ] }
-const reviewData = {};
+const reviewListEl = document.getElementById("review-list");
 
 /* ⭐ 안산 중심 & 범위 제한 */
 const ANSAN_CENTER = [37.3189, 126.8375];
@@ -221,6 +216,68 @@ const stores = [
     }
 ];
 
+/* ⭐ 리뷰 데이터 저장용 (새로고침하면 초기화됨) */
+let currentStoreName = null;
+const reviewStore = {};  // { "식당이름": [ {rating, text, date}, ... ] }
+
+/* 별 클릭 시 색칠하기 */
+function setStarActive(count) {
+    if (!starRatingEl) return;
+    const stars = Array.from(starRatingEl.querySelectorAll("span"));
+    stars.forEach((star, idx) => {
+        if (idx < count) {
+            star.classList.add("active");
+        } else {
+            star.classList.remove("active");
+        }
+    });
+}
+
+/* 특정 식당의 리뷰 목록 렌더링 */
+function renderReviews(storeName) {
+    if (!reviewListEl) return;
+
+    reviewListEl.innerHTML = "";
+
+    const list = reviewStore[storeName] || [];
+
+    if (list.length === 0) {
+        const p = document.createElement("p");
+        p.className = "no-review";
+        p.textContent = "아직 등록된 리뷰가 없습니다.";
+        reviewListEl.appendChild(p);
+        return;
+    }
+
+    list.forEach(item => {
+        const wrap = document.createElement("div");
+        wrap.className = "review-item";
+
+        const header = document.createElement("div");
+        header.className = "review-header";
+
+        const starSpan = document.createElement("span");
+        starSpan.className = "review-stars";
+        starSpan.textContent = "★".repeat(item.rating);
+
+        const dateSpan = document.createElement("span");
+        dateSpan.className = "review-date";
+        dateSpan.textContent = item.date;
+
+        header.appendChild(starSpan);
+        header.appendChild(dateSpan);
+
+        const body = document.createElement("div");
+        body.className = "review-body";
+        body.textContent = item.text;
+
+        wrap.appendChild(header);
+        wrap.appendChild(body);
+
+        reviewListEl.appendChild(wrap);
+    });
+}
+
 /* ⭐ 이모지 마커 디자인 함수 */
 function getMarkerContent(category) {
     const icons = {
@@ -241,7 +298,8 @@ const markers = stores.map(store => {
     });
 
     const m = L.marker([store.lat, store.lng], { icon: customIcon }).addTo(map);
-    m.store = store;
+    
+    m.store = store; 
     m.on("click", () => showStore(store));
     return m;
 });
@@ -260,11 +318,9 @@ function showStore(store) {
         reserveBtn.onclick = null;
     }
 
-    // ⭐ 현재 선택된 가게 이름 업데이트
+    // ⭐ 현재 선택된 가게 이름 저장 + 리뷰 표시
     currentStoreName = store.name;
-
-    // ⭐ 리뷰 UI 초기화 + 해당 가게 리뷰 보여주기
-    resetRatingUI();
+    setStarActive(0);
     renderReviews(store.name);
 }
 
@@ -287,59 +343,57 @@ function filterMarkers(category) {
 /* ⭐ 검색 기능 로직 */
 
 // 1. 입력할 때 추천 목록 띄우기
-if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-        const query = e.target.value.trim();
-        searchSuggestions.innerHTML = "";
+searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.trim();
+    searchSuggestions.innerHTML = ""; 
 
-        if (query.length === 0) {
-            searchSuggestions.style.display = "none";
-            return;
-        }
+    if (query.length === 0) {
+        searchSuggestions.style.display = "none";
+        return;
+    }
 
-        const matches = stores.filter(store =>
+    const matches = stores.filter(store => 
+        store.name.includes(query)
+    );
+
+    if (matches.length > 0) {
+        searchSuggestions.style.display = "block";
+        matches.forEach(store => {
+            const div = document.createElement("div");
+            div.className = "suggestion-item";
+            div.innerHTML = `<span>${store.name}</span> <span class="s-cat">${store.category}</span>`;
+            
+            div.addEventListener("click", () => {
+                handleSearchSelection(store);
+            });
+            
+            searchSuggestions.appendChild(div);
+        });
+    } else {
+        searchSuggestions.style.display = "none";
+    }
+});
+
+// 2. ⭐ 엔터 키 누르면 첫 번째 결과로 이동
+searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        const query = searchInput.value.trim();
+        if (query.length === 0) return;
+
+        const matches = stores.filter(store => 
             store.name.includes(query)
         );
 
         if (matches.length > 0) {
-            searchSuggestions.style.display = "block";
-            matches.forEach(store => {
-                const div = document.createElement("div");
-                div.className = "suggestion-item";
-                div.innerHTML = `<span>${store.name}</span> <span class="s-cat">${store.category}</span>`;
-
-                div.addEventListener("click", () => {
-                    handleSearchSelection(store);
-                });
-
-                searchSuggestions.appendChild(div);
-            });
-        } else {
-            searchSuggestions.style.display = "none";
+            handleSearchSelection(matches[0]);
+            searchInput.blur();
         }
-    });
-
-    // 2. 엔터 키 누르면 첫 번째 결과로 이동
-    searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            const query = searchInput.value.trim();
-            if (query.length === 0) return;
-
-            const matches = stores.filter(store =>
-                store.name.includes(query)
-            );
-
-            if (matches.length > 0) {
-                handleSearchSelection(matches[0]);
-                searchInput.blur();
-            }
-        }
-    });
-}
+    }
+});
 
 function handleSearchSelection(store) {
-    if (searchInput) searchInput.value = "";
-    if (searchSuggestions) searchSuggestions.style.display = "none";
+    searchInput.value = "";
+    searchSuggestions.style.display = "none";
 
     filterMarkers("전체");
     selectedTitle.textContent = "검색 결과";
@@ -355,8 +409,8 @@ document.querySelectorAll(".category-card").forEach(card => {
 
         categoryScreen.style.display = "none";
         mapScreen.style.display = "block";
-        if (searchInput) searchInput.value = "";
-        if (searchSuggestions) searchSuggestions.style.display = "none";
+        searchInput.value = ""; 
+        searchSuggestions.style.display = "none";
 
         selectedTitle.textContent =
             (cat === "전체") ? "전체 맛집" : `${cat} 맛집`;
@@ -385,6 +439,56 @@ backBtn.addEventListener("click", () => {
     map.setView(ANSAN_CENTER, ANSAN_ZOOM);
 });
 
+/* ⭐ 별점 클릭 & 리뷰 등록 이벤트 */
+if (starRatingEl && submitReviewBtn) {
+    const starSpans = Array.from(starRatingEl.querySelectorAll("span"));
+    let selectedRating = 0;
+
+    // 별 클릭 이벤트
+    starSpans.forEach(star => {
+        star.addEventListener("click", () => {
+            const value = Number(star.dataset.star);
+            selectedRating = value;
+            setStarActive(value);
+        });
+    });
+
+    // 리뷰 등록 버튼
+    submitReviewBtn.addEventListener("click", () => {
+        if (!currentStoreName) {
+            alert("먼저 지도의 가게를 선택해주세요!");
+            return;
+        }
+        if (selectedRating === 0) {
+            alert("별점을 선택해주세요!");
+            return;
+        }
+        const text = reviewTextEl.value.trim();
+        if (text.length === 0) {
+            alert("리뷰 내용을 입력해주세요!");
+            return;
+        }
+
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
+
+        if (!reviewStore[currentStoreName]) {
+            reviewStore[currentStoreName] = [];
+        }
+        reviewStore[currentStoreName].push({
+            rating: selectedRating,
+            text,
+            date: dateStr
+        });
+
+        // 입력창 초기화 + 별 초기화 + 리스트 다시 렌더링
+        reviewTextEl.value = "";
+        selectedRating = 0;
+        setStarActive(0);
+        renderReviews(currentStoreName);
+    });
+}
+
 /* ⭐ 랜덤 맛집 추천 기능 (룰렛) */
 const randomBtn = document.getElementById("random-btn");
 
@@ -392,119 +496,19 @@ if (randomBtn) {
     randomBtn.addEventListener("click", () => {
         const randomIndex = Math.floor(Math.random() * stores.length);
         const randomStore = stores[randomIndex];
-
+        
         categoryScreen.style.display = "none";
         mapScreen.style.display = "block";
-
+        
         selectedTitle.textContent = "🎲 오늘의 운명은?";
-
+        
         filterMarkers("전체");
-
+        
         map.setView([randomStore.lat, randomStore.lng], 16);
         showStore(randomStore);
-
+        
         setTimeout(() => {
             alert(`오늘의 추천 맛집은 [${randomStore.name}] 입니다! \n(${randomStore.category} - ${randomStore.desc})`);
         }, 300);
-    });
-}
-
-
-/* ───────── 별점 & 리뷰 기능 ───────── */
-
-// 별에 색 넣기
-function highlightStars(rating) {
-    if (!starContainer) return;
-    const stars = starContainer.querySelectorAll("span");
-    stars.forEach(star => {
-        const value = Number(star.dataset.star);
-        if (value <= rating) {
-            star.classList.add("active");
-        } else {
-            star.classList.remove("active");
-        }
-    });
-}
-
-// 리뷰 입력창 초기화
-function resetRatingUI() {
-    if (!starContainer || !reviewText) return;
-    currentRating = 0;
-    highlightStars(0);
-    reviewText.value = "";
-}
-
-// 가게별 리뷰 렌더링
-function renderReviews(storeName) {
-    if (!reviewList) return;
-
-    reviewList.innerHTML = "";
-    const list = reviewData[storeName] || [];
-
-    if (list.length === 0) {
-        reviewList.innerHTML = `<p class="no-review">아직 작성된 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>`;
-        return;
-    }
-
-    list.forEach(r => {
-        const div = document.createElement("div");
-        div.className = "review-item";
-        const starsText = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
-
-        div.innerHTML = `
-            <div class="review-header">
-                <span class="review-stars">${starsText}</span>
-                <span class="review-date">${r.date}</span>
-            </div>
-            <div class="review-body">${r.text}</div>
-        `;
-        reviewList.appendChild(div);
-    });
-}
-
-// ⭐ 별 클릭 이벤트
-if (starContainer) {
-    starContainer.addEventListener("click", (e) => {
-        const target = e.target;
-        if (!target.dataset.star) return;
-
-        const rating = Number(target.dataset.star);
-        currentRating = rating;
-        highlightStars(rating);
-    });
-}
-
-// ⭐ 리뷰 등록 버튼 이벤트
-if (submitReviewBtn) {
-    submitReviewBtn.addEventListener("click", () => {
-        if (!currentStoreName) {
-            alert("먼저 지도의 가게를 선택해 주세요!");
-            return;
-        }
-        if (currentRating === 0) {
-            alert("별점을 선택해 주세요!");
-            return;
-        }
-        if (!reviewText) return;
-        const text = reviewText.value.trim();
-        if (!text) {
-            alert("리뷰 내용을 입력해 주세요!");
-            return;
-        }
-
-        const newReview = {
-            rating: currentRating,
-            text,
-            date: new Date().toLocaleDateString("ko-KR")
-        };
-
-        if (!reviewData[currentStoreName]) {
-            reviewData[currentStoreName] = [];
-        }
-        reviewData[currentStoreName].push(newReview);
-
-        // 입력창 초기화 + 다시 렌더
-        resetRatingUI();
-        renderReviews(currentStoreName);
     });
 }

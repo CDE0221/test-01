@@ -1,8 +1,318 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    /* 👇 화사한 파스텔톤 그라데이션 배경 적용! */
+    background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+    font-family: "Noto Sans KR", sans-serif;
+    min-height: 100vh; /* 화면 전체에 배경이 꽉 차도록 설정 */
+}
+/* ───────── 첫 화면 ───────── */
+
+#category-screen {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#category-screen h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+}
+
+#category-screen p {
+    margin: 8px 0 30px;
+    color: #6b7280;
+    text-align: center;
+    font-size: 15px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 220px);
+    grid-auto-rows: 150px;
+    gap: 24px;
+    justify-content: center;
+}
+
+@media (max-width: 960px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        width: 90%;
+    }
+}
+
+.category-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px 18px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.15s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+
+.emoji { font-size: 30px; margin-bottom: 10px; }
+.title { font-size: 18px; font-weight: 700; }
+.desc { font-size: 13px; color: #6b7280; }
+
+
+/* ───────── 지도 화면 ───────── */
+
+#map-screen {
+    display: none;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 30px;
+}
+
+/* 상단 바 (뒤로가기 + 검색창) */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 20px;
+}
+
+#back-btn {
+    background: #e5e7eb;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ⭐ 검색창 스타일 */
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+}
+
+#search-input:focus {
+    border-color: #fb923c;
+    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.2);
+}
+
+/* ⭐ 연관 검색어(자동완성) 박스 */
+#search-suggestions {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    z-index: 1000;
+    overflow: hidden;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #f3f4f6;
+}
+
+.suggestion-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-item:hover {
+    background: #fff7ed; /* 연한 주황색 배경 */
+}
+
+.suggestion-item .s-cat {
+    font-size: 12px;
+    color: #9ca3af;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+
+/* 지도 영역 */
+#map-container {
+    display: flex;
+    gap: 24px;
+}
+
+#map {
+    flex: 4;
+    height: 520px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    z-index: 1; /* 검색창보다 아래로 */
+}
+
+#info-panel {
+    flex: 3;
+    min-height: 520px;
+    background: white;
+    border-radius: 18px;
+    padding: 22px 26px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    .search-container {
+        max-width: none;
+    }
+    #map-container {
+        flex-direction: column;
+    }
+    #map {
+        height: 300px;
+        flex: none;
+    }
+}
+
+#selected-category-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fb923c;
+}
+
+#store-name {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+#store-desc,
+#store-phone,
+#store-hours {
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+#reserve-btn {
+    margin-top: 12px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 999px;
+    background: #fb923c;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    width: fit-content;
+}
+
+/* ⭐ 지도 마커 디자인 (적당히 큰 60px 버전) */
+.custom-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.marker-pin {
+    width: 60px;       /* 다시 60px로 */
+    height: 60px;      /* 다시 60px로 */
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: 36px;   /* 이모지도 36px로 축소 */
+    
+    border: 3px solid #fff;
+    transition: transform 0.2s;
+}
+
+.custom-marker:hover .marker-pin {
+    transform: scale(1.1) translateY(-8px);
+    border-color: #3e86f5;
+}
+
+/* ⭐ 랜덤 추천 섹션 디자인 */
+.random-pick-section {
+    margin-top: 50px;       /* 위쪽 카드들과 거리 벌리기 */
+    text-align: center;     /* 가운데 정렬 */
+    animation: fadeInUp 1s ease-out; /* 부드럽게 등장하는 애니메이션 */
+    padding-bottom: 50px;   /* 바닥 여백 확보 */
+}
+
+.random-text {
+    font-size: 15px;
+    color: #fff;            /* 배경이 진하니까 글자는 흰색으로 */
+    margin-bottom: 15px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 🎲 랜덤 버튼 디자인 (핵심!) */
+.random-btn {
+    background: white;      /* 깔끔한 흰색 배경 */
+    border: none;
+    padding: 15px 35px;     /* 버튼 크기 넉넉하게 */
+    font-size: 18px;
+    font-weight: 800;       /* 글자 굵게 */
+    color: #333;
+    border-radius: 50px;    /* 둥글둥글한 알약 모양 */
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 그림자 */
+    transition: all 0.3s ease; /* 움직임 부드럽게 */
+    
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 마우스 올렸을 때 효과 (인터랙션) */
+.random-btn:hover {
+    transform: translateY(-5px) scale(1.05); /* 위로 살짝 뜨면서 커짐 */
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4); /* 흰색 후광 효과 */
+    color: #a18cd1; /* 글자색을 배경색과 깔맞춤 */
+}
+
+/* 등장 애니메이션 정의 */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* ─────────────────────────────────── */
 /* ⭐ 리뷰 & 별점 UI 스타일 */
 /* ─────────────────────────────────── */
 
-/* 별점 영역 */
 #review-section {
     margin-top: 25px;
     padding-top: 15px;
@@ -15,7 +325,7 @@
     font-weight: 700;
 }
 
-/* ⭐ 별 아이콘 스타일 */
+/* ⭐ 별 아이콘 줄 */
 #star-rating {
     display: flex;
     gap: 6px;
@@ -25,12 +335,12 @@
 #star-rating span {
     font-size: 26px;
     cursor: pointer;
-    color: #d1d5db; /* 회색 기본 */
+    color: #d1d5db; /* 기본 회색 */
     transition: color 0.15s;
 }
 
 #star-rating span.active {
-    color: #fbbf24; /* ⭐ 노란색 */
+    color: #fbbf24; /* 선택된 별 노란색 */
 }
 
 /* 리뷰 입력창 */
