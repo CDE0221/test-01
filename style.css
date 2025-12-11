@@ -1,11 +1,13 @@
 * { box-sizing: border-box; }
+
+/* ───────── 전체 기본 ───────── */
 body {
     margin: 0;
-    /* 👇 화사한 파스텔톤 그라데이션 배경 적용! */
-    background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+    background: #f9fafb; /* 전체적으로 거의 흰색 느낌 */
     font-family: "Noto Sans KR", sans-serif;
-    min-height: 100vh; /* 화면 전체에 배경이 꽉 차도록 설정 */
+    min-height: 100vh;
 }
+
 /* ───────── 첫 화면 ───────── */
 
 #category-screen {
@@ -46,25 +48,29 @@ body {
     }
 }
 
+/* ⭐ 카테고리 카드 - 살짝 더 고급스럽게 */
 .category-card {
-    background: #ffffff;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 22px;
     padding: 20px 18px;
     box-shadow: 0 18px 40px rgba(0,0,0,0.08);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transition: 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    border: 1px solid transparent;
 }
 
 .category-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    background: #ffffff;
+    border-color: rgba(148, 163, 184, 0.3); /* 옅은 회보라 테두리 */
 }
 
-.emoji { font-size: 30px; margin-bottom: 10px; }
-.title { font-size: 18px; font-weight: 700; }
+.emoji { font-size: 30px; margin-bottom: 8px; }
+.title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
 .desc { font-size: 13px; color: #6b7280; }
 
 
@@ -87,14 +93,24 @@ body {
     gap: 20px;
 }
 
+/* ⭐ 뒤로가기 버튼을 좀 더 "앱" 느낌으로 */
 #back-btn {
-    background: #e5e7eb;
-    border: none;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     padding: 10px 20px;
     border-radius: 999px;
     cursor: pointer;
     font-weight: 700;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+#back-btn:hover {
+    background: #f9fafb;
+    border-color: #c4b5fd; /* 연보라 포인트 */
 }
 
 /* ⭐ 검색창 스타일 */
@@ -115,8 +131,8 @@ body {
 }
 
 #search-input:focus {
-    border-color: #fb923c;
-    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.2);
+    border-color: #a855f7; /* 보라 포인트 */
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.24);
 }
 
 /* ⭐ 연관 검색어(자동완성) 박스 */
@@ -147,7 +163,7 @@ body {
 }
 
 .suggestion-item:hover {
-    background: #fff7ed; /* 연한 주황색 배경 */
+    background: #f5f3ff; /* 연보라 배경 */
 }
 
 .suggestion-item .s-cat {
@@ -163,27 +179,30 @@ body {
 #map-container {
     display: flex;
     gap: 24px;
+    align-items: stretch;
 }
 
+/* ⭐ 비율 / 그림자 약간 수정 */
 #map {
-    flex: 4;
+    flex: 5;
     height: 520px;
     border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     z-index: 1; /* 검색창보다 아래로 */
 }
 
 #info-panel {
-    flex: 3;
-    min-height: 520px;
-    background: white;
+    flex: 4;
+    max-height: 520px;
+    background: #ffffff;
     border-radius: 18px;
     padding: 22px 26px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.07);
+    box-shadow: 0 18px 40px rgba(15,23,42,0.07);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow-y: auto; /* 내용 많아지면 패널 안에서 스크롤 */
 }
 
 @media (max-width: 768px) {
@@ -194,6 +213,9 @@ body {
     .search-container {
         max-width: none;
     }
+    #map-screen {
+        padding: 16px 14px;
+    }
     #map-container {
         flex-direction: column;
     }
@@ -201,17 +223,24 @@ body {
         height: 300px;
         flex: none;
     }
+    #info-panel {
+        max-height: none;
+    }
 }
 
+/* ⭐ 텍스트/타이틀 보라 포인트 */
 #selected-category-title {
     font-size: 13px;
     font-weight: 700;
-    color: #fb923c;
+    color: #8b5cf6;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 #store-name {
     font-size: 22px;
-    font-weight: 700;
+    font-weight: 800;
+    margin-top: 4px;
 }
 
 #store-desc,
@@ -227,12 +256,20 @@ body {
     padding: 10px 15px;
     border: none;
     border-radius: 999px;
-    background: #fb923c;
+    background: #8b5cf6; /* 보라 포인트 */
     color: white;
     cursor: pointer;
     font-size: 14px;
     width: fit-content;
+    box-shadow: 0 6px 14px rgba(139, 92, 246, 0.35);
+    transition: 0.2s;
 }
+
+#reserve-btn:hover {
+    background: #7c3aed;
+    transform: translateY(-1px);
+}
+
 
 /* ⭐ 지도 마커 디자인 (적당히 큰 60px 버전) */
 .custom-marker {
@@ -242,65 +279,61 @@ body {
 }
 
 .marker-pin {
-    width: 60px;       /* 다시 60px로 */
-    height: 60px;      /* 다시 60px로 */
+    width: 60px;
+    height: 60px;
     background: white;
     border-radius: 50%;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(15, 23, 42, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    font-size: 36px;   /* 이모지도 36px로 축소 */
-    
+    font-size: 36px;
     border: 3px solid #fff;
-    transition: transform 0.2s;
+    transition: transform 0.2s, border-color 0.2s;
 }
 
 .custom-marker:hover .marker-pin {
     transform: scale(1.1) translateY(-8px);
-    border-color: #3e86f5;
+    border-color: #8b5cf6; /* 마커도 보라 포인트 */
 }
+
 
 /* ⭐ 랜덤 추천 섹션 디자인 */
 .random-pick-section {
-    margin-top: 50px;       /* 위쪽 카드들과 거리 벌리기 */
-    text-align: center;     /* 가운데 정렬 */
-    animation: fadeInUp 1s ease-out; /* 부드럽게 등장하는 애니메이션 */
-    padding-bottom: 50px;   /* 바닥 여백 확보 */
+    margin-top: 50px;
+    text-align: center;
+    animation: fadeInUp 1s ease-out;
+    padding-bottom: 50px;
 }
 
 .random-text {
     font-size: 15px;
-    color: #fff;            /* 배경이 진하니까 글자는 흰색으로 */
+    color: #4b5563;
     margin-bottom: 15px;
     font-weight: 500;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-/* 🎲 랜덤 버튼 디자인 (핵심!) */
+/* 🎲 랜덤 버튼 디자인 */
 .random-btn {
-    background: white;      /* 깔끔한 흰색 배경 */
+    background: white;
     border: none;
-    padding: 15px 35px;     /* 버튼 크기 넉넉하게 */
+    padding: 15px 35px;
     font-size: 18px;
-    font-weight: 800;       /* 글자 굵게 */
-    color: #333;
-    border-radius: 50px;    /* 둥글둥글한 알약 모양 */
+    font-weight: 800;
+    color: #4b5563;
+    border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 그림자 */
-    transition: all 0.3s ease; /* 움직임 부드럽게 */
-    
+    box-shadow: 0 5px 15px rgba(15, 23, 42, 0.18);
+    transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 10px;
 }
 
-/* 마우스 올렸을 때 효과 (인터랙션) */
 .random-btn:hover {
-    transform: translateY(-5px) scale(1.05); /* 위로 살짝 뜨면서 커짐 */
-    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4); /* 흰색 후광 효과 */
-    color: #a18cd1; /* 글자색을 배경색과 깔맞춤 */
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5); /* 보라 후광 느낌 */
+    color: #7c3aed;
 }
 
 /* 등장 애니메이션 정의 */
@@ -309,20 +342,31 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+
 /* ─────────────────────────────────── */
 /* ⭐ 리뷰 & 별점 UI 스타일 */
 /* ─────────────────────────────────── */
 
+/* 👉 리뷰 영역을 하나의 카드처럼 */
 #review-section {
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px solid #e5e7eb;
+    margin-top: 18px;
+    padding: 14px 14px 16px;
+    border-radius: 14px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
 }
 
 #review-section h3 {
-    font-size: 17px;
-    margin-bottom: 12px;
+    font-size: 15px;
+    margin: 0 0 10px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#review-section h3::before {
+    content: "💬";
 }
 
 /* ⭐ 별 아이콘 줄 */
@@ -340,7 +384,7 @@ body {
 }
 
 #star-rating span.active {
-    color: #fbbf24; /* 선택된 별 노란색 */
+    color: #fbbf24; /* 선택된 별 노란색 (이건 그냥 별색이라 유지) */
 }
 
 /* 리뷰 입력창 */
@@ -353,18 +397,19 @@ body {
     resize: vertical;
     font-size: 14px;
     outline: none;
+    background: #ffffff;
 }
 
 #review-text:focus {
-    border-color: #fb923c;
-    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
 }
 
 /* 리뷰 등록 버튼 */
 #submit-review {
     margin-top: 10px;
     padding: 10px 20px;
-    background: #fb923c;
+    background: #8b5cf6;
     border: none;
     border-radius: 10px;
     color: white;
@@ -372,10 +417,11 @@ body {
     font-size: 14px;
     cursor: pointer;
     transition: 0.2s;
+    box-shadow: 0 6px 14px rgba(139, 92, 246, 0.35);
 }
 
 #submit-review:hover {
-    background: #f97316;
+    background: #7c3aed;
     transform: translateY(-2px);
 }
 
@@ -389,7 +435,7 @@ body {
 
 .review-item {
     padding: 12px 14px;
-    background: #f9fafb;
+    background: #ffffff;
     border-radius: 10px;
     border: 1px solid #e5e7eb;
 }
