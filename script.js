@@ -51,8 +51,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 /* ⭐ 맛집 데이터 */
 const stores = [
     { name:"진원소우 고잔신도시점", category:"한식", lat:37.3175, lng:126.8310, desc:"소고기 · 한식 고기 전문점", phone:"0507-1388-2292", hours:"11:00~22:30", reserve:"" },
-    { name:"카페 나드오프 - 잎새달", category:"카페", lat:37.3310, lng:126.8120, desc:"감성 카페", phone:"정보 없음", hours:"10:00~22:00", reserve:"" },
-    { name:"열이틀", category:"카페", lat:37.3340, lng:126.8150, desc:"조용한 카페", phone:"정보 없음", hours:"10:00~22:00", reserve:"" },
     { name:"당당초밥", category:"일식", lat:37.3150, lng:126.8380, desc:"초밥 전문점", phone:"0507-1312-5817", hours:"11:00~20:00", reserve:"" },
     { name:"파앤피하우스", category:"양식", lat:37.3230, lng:126.8270, desc:"파스타 · 피자", phone:"정보 없음", hours:"11:00~21:00", reserve:"" },
     { name:"마마교자관", category:"중식", lat:37.3190, lng:126.8240, desc:"교자 전문점", phone:"031-491-2888", hours:"10:00~22:00", reserve:"" },
@@ -224,6 +222,29 @@ const stores = [
         reserve: ""
     }
 ];
+
+// ✅ 시연 일식+카페
+stores.push(
+  { name:"백금당", category:"카페", lat:37.313216, lng:126.846212, desc:"포근함이 살아있는 수플레 케이크", phone:"0507-1315-3062", hours:"12:00~22:00", reserve:"" },
+  { name:"centrale de façade", category:"카페", lat:37.314456, lng:126.839376, desc:"이국적인 브런치&파스타", phone:"031-403-0099", hours:"11:00~21:00", reserve:"" },
+  { name:"미드나잇 오아시스", category:"카페", lat:37.313795, lng:126.840425, desc:"사장님의 정성이 느껴지는 달콤한 디저트", phone:"0507-1392-2421", hours:"12:00~21:00", reserve:"" },
+  { name:"포터블", category:"카페", lat:37.310615, lng:126.827367, desc:"시그니처 라떼로 완성하는 특별한 휴식", phone:"0507-1335-0249", hours:"10:00~21:30", reserve:"" },
+  { name:"귀큰여우", category:"카페", lat:37.317304, lng:126.837453, desc:"레트로 감성과 현대적 편안함의 만남", phone:"031-480-2040", hours:"12:00~23:30", reserve:"" },
+  { name:"마리나 베이커리", category:"카페", lat:37.339555, lng:126.794879, desc:"한 조각으로도 만족스러운 크기의 행복", phone:"010-6324-3342", hours:"10:00~22:00", reserve:"" },
+  { name:"카페 시낭길", category:"카페", lat:37.335352, lng:126.858405, desc:"소금빵 한 입에 녹는 아아와의 조합", phone:"0507-1402-9456", hours:"10:30~18:00", reserve:"" },
+  { name:"디어라이", category:"카페", lat:37.330032, lng:126.840567, desc:"밤 가득 밤팥치아바타의 달콤한 유혹", phone:"070-7763-1208", hours:"11:00~21:00", reserve:"" },
+  { name:"카페 나드오프", category:"카페", lat:37.325371, lng:126.802708, desc:"따뜻한 쑥라떼 한 잔의 여유", phone:"0507-1334-7383", hours:"10:00~22:00", reserve:"" },
+  { name:"이솝가드닝(Aesop Gardner)", category:"카페", lat:37.331264, lng:126.786468, desc:"친절한 서비스와 맛있는 음료 한 잔", phone:"031-494-9692", hours:"09:30~23:00", reserve:"" },
+  { name:"윤선장어시장", category:"일식", lat:37.317745, lng:126.840922, desc:"신선함으로 무장한 두툼한 회의 매력", phone:"0507-1472-8587", hours:"13:00~06:30", reserve:"" },
+  { name:"븟", category:"일식", lat:37.312113, lng:126.827847, desc:"특별한 날 찾게 되는 정갈한 한상", phone:"0507-1375-2317", hours:"11:30~21:00", reserve:"" },
+  { name:"고치소우", category:"일식", lat:37.334524, lng:126.845241, desc:"깔끔한 초밥과 깊은 맛의 우동 세트", phone:"031-411-2345", hours:"10:00~22:00", reserve:"" },
+  { name:"오승렬스시", category:"일식", lat:37.302693, lng:126.861302, desc:"가성비 최고 그랑프리 초밥 세트 추천", phone:"0507-1327-5017", hours:"11:00~21:30", reserve:"" },
+  { name:"카이센", category:"일식", lat:37.302081, lng:126.864738, desc:"차 타고 찾아오는 회전초밥의 성지", phone:"031-406-2676", hours:"11:45~22:00", reserve:"" },
+  { name:"스시정", category:"일식", lat:37.298322, lng:126.86298, desc:"회덮밥으로 든든하게 채우는 점심", phone:"031-417-3226", hours:"11:30~21:40", reserve:"" },
+  { name:"석석석", category:"일식", lat:37.317637, lng:126.835884, desc:"안산 중앙동의 숨은 보석 돈카츠", phone:"0507-1316-1769", hours:"11:30~21:30", reserve:"" },
+  { name:"겐코쇼쿠도 초지역점", category:"일식", lat:37.325439, lng:126.801866, desc:"도톰한 연어가 매력적인 연어덮밥", phone:"0507-1318-9934", hours:"11:00~21:00", reserve:"" },
+  { name:"휘니치로", category:"일식", lat:37.318375, lng:126.841486, desc:"일본식라멘&교자 맛집", phone:"0507-1359-8288", hours:"11:30~22:00", reserve:"" }
+);
 
 /* ✅ (중요) 전역 상태: 현재 카테고리 기억 (리스트에도 똑같이 반영) */
 let currentCategory = null;
